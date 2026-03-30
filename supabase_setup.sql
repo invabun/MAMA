@@ -1,6 +1,6 @@
 -- ================================================================
 -- MAMA Members Table — Run this in Supabase SQL Editor
--- Project: eerdjpvhehndamekevvi (B3D Supabase)
+-- Project: tjxposrskeoobldopbac (AIShort / B3D)
 -- ================================================================
 
 CREATE TABLE IF NOT EXISTS public.mama_members (
