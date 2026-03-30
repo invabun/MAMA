@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAMA – Persatuan Percetakan 3D Malaysia</title>
+  <meta name="description" content="Malaysia Additive Manufacturing Association (MAMA) – Persatuan Percetakan 3D Malaysia. Sertai kami, daftar keahlian dan berkembang bersama industri." />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; color: #2d2d2d; background: #fff; line-height: 1.7; }
+    img { max-width: 100%; }
+    a { text-decoration: none; color: inherit; }
+
+    :root {
+      --blue:     #1A4F8B;
+      --blue-mid: #2E75B6;
+      --blue-lt:  #D6E4F5;
+      --accent:   #FF6B35;
+      --grey:     #5a5a5a;
+      --grey-lt:  #f5f7fa;
+      --white:    #ffffff;
+      --shadow:   0 4px 24px rgba(0,0,0,0.10);
+    }
+
+    /* ── TOPBAR ── */
+    #topbar {
+      background: var(--blue);
+      color: #cde;
+      font-size: 0.78rem;
+      padding: 6px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+    #topbar a { color: #cde; margin-left: 14px; }
+    #topbar a:hover { color: #fff; }
+
+    /* ── LANG SWITCHER ── */
+    .lang-switcher {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 3px 6px;
+    }
+    .lang-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      color: #b8d0ee;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      cursor: pointer;
+      transition: .2s;
+      font-family: inherit;
+    }
+    .lang-btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .lang-btn.active { background: #fff; color: var(--blue); border-color: transparent; }
+    .lang-sep { color: rgba(255,255,255,0.25); font-size: 0.7rem; }
+
+    /* ── NAVBAR ── */
+    nav {
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      position: sticky; top: 0; z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1180px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 24px;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-badge {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #000;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .logo-badge img { width: 54px; height: 54px; object-fit: cover; border-radius: 50%; }
+    .logo-text .abbr { font-size: 1.35rem; font-weight: 800; color: var(--blue); }
+    .logo-text .full { font-size: 0.65rem; color: var(--grey); text-transform: uppercase; letter-spacing: 0.4px; }
+    .nav-links { display: flex; gap: 2px; align-items: center; list-style: none; }
+    .nav-links a {
+      padding: 8px 14px; border-radius: 8px;
+      font-size: 0.88rem; font-weight: 500; color: var(--grey);
+      transition: background .2s, color .2s;
+    }
+    .nav-links a:hover { background: var(--blue-lt); color: var(--blue); }
+    .nav-cta {
+      background: var(--accent) !important; color: #fff !important;
+      font-weight: 700 !important; padding: 9px 18px !important; border-radius: 9px !important;
+    }
+    .nav-cta:hover { background: #e55a25 !important; }
+
+    /* ── ANNOUNCE ── */
+    #announce {
+      background: linear-gradient(90deg, var(--accent), #e55a25);
+      color: #fff; text-align: center; padding: 10px 24px;
+      font-size: 0.87rem; font-weight: 600;
+    }
+    #announce a { color: #ffe; text-decoration: underline; }
+
+    /* ── HERO ── */
+    #hero {
+      background: linear-gradient(135deg, var(--blue) 0%, #0d2e57 60%, #1a3a6e 100%);
+      color: #fff; padding: 88px 24px 76px; position: relative; overflow: hidden;
+    }
+    #hero::before {
+      content: ""; position: absolute; right: -80px; top: -80px;
+      width: 480px; height: 480px; border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+    }
+    #hero::after {
+      content: ""; position: absolute; right: 80px; bottom: -120px;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: rgba(255,255,255,0.03);
+    }
+    .hero-inner {
+      max-width: 1180px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 60px; align-items: center; position: relative; z-index: 1;
+    }
+    .hero-tag {
+      display: inline-block;
+      background: rgba(255,107,53,0.25); color: #ffb899;
+      border: 1px solid rgba(255,107,53,0.4); border-radius: 50px;
+      font-size: 0.8rem; font-weight: 600; padding: 4px 14px;
+      margin-bottom: 20px; letter-spacing: 0.5px;
+    }
+    #hero h1 { font-size: 2.7rem; font-weight: 800; line-height: 1.15; margin-bottom: 20px; }
+    #hero h1 span { color: #FF6B35; }
+    #hero p { font-size: 1rem; color: #b8d0ee; margin-bottom: 32px; line-height: 1.8; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent); color: #fff; padding: 13px 26px;
+      border-radius: 10px; font-weight: 700; font-size: 0.93rem;
+      transition: background .2s, transform .15s; border: none; cursor: pointer; display: inline-block;
+    }
+    .btn-primary:hover { background: #e55a25; transform: translateY(-2px); }
+    .btn-outline {
+      border: 2px solid rgba(255,255,255,0.35); color: #fff; padding: 13px 26px;
+      border-radius: 10px; font-weight: 600; font-size: 0.93rem;
+      transition: .2s; display: inline-block;
+    }
+    .btn-outline:hover { border-color: #fff; background: rgba(255,255,255,0.08); transform: translateY(-2px); }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .stat-card {
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 20px 18px; text-align: center;
+    }
+    .stat-num { font-size: 2rem; font-weight: 800; color: #FF6B35; }
+    .stat-label { font-size: 0.76rem; color: #b0c8e8; margin-top: 4px; }
+    .reg-badge {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 14px; padding: 14px 18px;
+      font-size: 0.82rem; color: #90afd4; text-align: center; margin-top: 14px;
+    }
+    .reg-badge strong { color: #fff; }
+
+    /* ── SECTIONS ── */
+    section { padding: 78px 24px; }
+    .section-inner { max-width: 1180px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block; background: var(--blue-lt); color: var(--blue);
+      border-radius: 50px; font-size: 0.77rem; font-weight: 700;
+      padding: 4px 14px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .section-title { font-size: 1.95rem; font-weight: 800; color: var(--blue); margin-bottom: 14px; line-height: 1.2; }
+    .section-sub { color: var(--grey); font-size: 1rem; max-width: 620px; margin-bottom: 44px; }
+
+    /* ── ABOUT ── */
+    #about { background: var(--grey-lt); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    .about-points { display: flex; flex-direction: column; gap: 18px; margin-top: 20px; }
+    .about-point { display: flex; gap: 14px; align-items: flex-start; }
+    .point-icon {
+      width: 42px; height: 42px; background: var(--blue); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem; flex-shrink: 0; color: #fff;
+    }
+    .point-text strong { display: block; font-weight: 700; color: #1a1a1a; margin-bottom: 2px; }
+    .point-text span { font-size: 0.9rem; color: var(--grey); }
+    .manifesto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .manifesto-card {
+      background: #fff; border-radius: 12px; padding: 16px 14px;
+      box-shadow: var(--shadow); border-left: 4px solid var(--blue-mid);
+    }
+    .manifesto-card .m-num { font-size: 0.72rem; color: var(--blue-mid); font-weight: 700; margin-bottom: 4px; }
+    .manifesto-card .m-text { font-size: 0.86rem; color: #333; font-weight: 500; line-height: 1.4; }
+
+    /* ── MEMBERSHIP ── */
+    #membership { background: #fff; }
+    .mem-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 26px; margin-bottom: 0; }
+    .mem-card {
+      border-radius: 16px; padding: 30px 26px; text-align: center;
+      box-shadow: var(--shadow); border: 2px solid transparent;
+      transition: border-color .2s, transform .2s; background: #fff;
+    }
+    .mem-card:hover { border-color: var(--blue); transform: translateY(-4px); }
+    .mem-card.featured { background: linear-gradient(135deg, var(--blue), #0d2e57); color: #fff; }
+    .mem-card .mem-icon { font-size: 2.2rem; margin-bottom: 14px; }
+    .mem-card .mem-type { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--blue-mid); margin-bottom: 8px; }
+    .mem-card.featured .mem-type { color: #90c5f5; }
+    .mem-card .mem-price { font-size: 1.9rem; font-weight: 800; color: var(--blue); margin-bottom: 4px; }
+    .mem-card.featured .mem-price { color: #fff; }
+    .mem-card .mem-price-sub { font-size: 0.78rem; color: var(--grey); margin-bottom: 18px; }
+    .mem-card.featured .mem-price-sub { color: #90c5f5; }
+    .mem-card ul { list-style: none; text-align: left; margin-bottom: 22px; display: flex; flex-direction: column; gap: 8px; }
+    .mem-card ul li { font-size: 0.87rem; color: #444; display: flex; gap: 8px; align-items: flex-start; }
+    .mem-card.featured ul li { color: #c6dff8; }
+    .mem-card ul li::before { content: "✓"; color: var(--accent); font-weight: 700; flex-shrink: 0; }
+    .mem-card .btn-mem {
+      display: block; text-align: center; padding: 10px 18px; border-radius: 10px;
+      font-weight: 700; font-size: 0.88rem; background: var(--blue-lt); color: var(--blue); transition: .2s;
+    }
+    .mem-card .btn-mem:hover { background: var(--blue); color: #fff; }
+    .mem-card.featured .btn-mem { background: var(--accent); color: #fff; }
+    .mem-card.featured .btn-mem:hover { background: #e55a25; }
+
+    /* ── REGISTER ── */
+    #register { background: var(--grey-lt); }
+    .form-wrap {
+      background: #fff; border-radius: 20px; box-shadow: var(--shadow);
+      padding: 44px 44px; max-width: 760px; margin: 0 auto;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 0.85rem; font-weight: 600; color: #333; margin-bottom: 6px; }
+    .required { color: var(--accent); }
+    input[type=text], input[type=email], input[type=tel], select, textarea {
+      width: 100%; border: 1.5px solid #ddd; border-radius: 10px;
+      padding: 11px 14px; font-size: 0.91rem; font-family: inherit; color: #222;
+      outline: none; transition: .2s; background: #fafafa;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--blue-mid); box-shadow: 0 0 0 3px rgba(46,117,182,0.12); background: #fff;
+    }
+    textarea { resize: vertical; min-height: 90px; }
+    .form-type-toggle { display: flex; gap: 10px; margin-bottom: 26px; }
+    .toggle-btn {
+      flex: 1; padding: 11px; border: 2px solid #ddd; border-radius: 10px;
+      text-align: center; cursor: pointer; font-weight: 600; font-size: 0.88rem;
+      color: var(--grey); transition: .2s; background: #fafafa;
+    }
+    .toggle-btn.active { border-color: var(--blue); background: var(--blue-lt); color: var(--blue); }
+    .fee-note {
+      background: var(--blue-lt); border-left: 4px solid var(--blue);
+      border-radius: 0 10px 10px 0; padding: 13px 17px;
+      font-size: 0.86rem; color: var(--blue); margin-bottom: 22px;
+    }
+    .submit-btn {
+      width: 100%; background: var(--blue); color: #fff; border: none;
+      border-radius: 12px; padding: 14px; font-size: 0.97rem; font-weight: 700;
+      cursor: pointer; transition: .2s;
+    }
+    .submit-btn:hover { background: #0d2e57; transform: translateY(-2px); }
+    .form-footer-note { text-align: center; font-size: 0.8rem; color: var(--grey); margin-top: 16px; }
+    .success-msg {
+      display: none; background: #e8f7e8; border: 1.5px solid #5cb85c;
+      border-radius: 12px; padding: 20px 24px; text-align: center;
+      color: #2d7a2d; font-weight: 600; margin-top: 20px;
+    }
+
+    /* ── EVENTS ── */
+    #events { background: #fff; }
+    .events-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; }
+    .event-card { border-radius: 14px; border: 1.5px solid #eee; overflow: hidden; transition: .2s; }
+    .event-card:hover { box-shadow: var(--shadow); transform: translateY(-3px); }
+    .event-top { background: var(--blue); padding: 20px 22px; color: #fff; }
+    .event-date { font-size: 0.76rem; color: #90c5f5; margin-bottom: 6px; }
+    .event-title { font-size: 0.97rem; font-weight: 700; line-height: 1.3; }
+    .event-body { padding: 17px 22px; }
+    .event-mode {
+      display: inline-block; background: #e8f0fb; color: var(--blue);
+      border-radius: 50px; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; margin-bottom: 10px;
+    }
+    .event-desc { font-size: 0.86rem; color: var(--grey); }
+    .event-link { display: inline-block; margin-top: 12px; font-size: 0.84rem; font-weight: 700; color: var(--blue); }
+
+    /* ── COMMITTEE ── */
+    #committee { background: var(--grey-lt); }
+    .committee-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; }
+    .member-card {
+      background: #fff; border-radius: 14px; padding: 22px 16px;
+      text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.06); transition: .2s;
+    }
+    .member-card:hover { transform: translateY(-3px); }
+    .member-avatar {
+      width: 64px; height: 64px; border-radius: 50%; background: var(--blue);
+      margin: 0 auto 13px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; font-weight: 800; color: #fff;
+    }
+    .member-name { font-size: 0.88rem; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
+    .member-pos { font-size: 0.74rem; color: var(--blue-mid); font-weight: 600; margin-bottom: 4px; }
+    .member-org { font-size: 0.72rem; color: var(--grey); }
+    .member-state {
+      display: inline-block; margin-top: 8px; background: var(--blue-lt); color: var(--blue);
+      border-radius: 50px; font-size: 0.68rem; padding: 2px 10px; font-weight: 600;
+    }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--blue); color: #fff; padding: 78px 24px; }
+    .contact-inner {
+      max-width: 1180px; margin: 0 auto;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start;
+    }
+    #contact .section-title { color: #fff; }
+    .contact-items { display: flex; flex-direction: column; gap: 18px; margin-top: 28px; }
+    .contact-item { display: flex; gap: 14px; align-items: flex-start; }
+    .c-icon {
+      width: 42px; height: 42px; background: rgba(255,255,255,0.12); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center; font-size: 1.15rem; flex-shrink: 0;
+    }
+    .c-label { font-size: 0.75rem; color: #90afd4; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .c-value { font-size: 0.93rem; color: #fff; }
+    .contact-form { display: flex; flex-direction: column; gap: 13px; }
+    .contact-form input, .contact-form textarea {
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 10px; padding: 11px 14px; color: #fff; font-family: inherit; font-size: 0.91rem; outline: none;
+    }
+    .contact-form input::placeholder, .contact-form textarea::placeholder { color: #90afd4; }
+    .contact-form input:focus, .contact-form textarea:focus { border-color: rgba(255,255,255,0.5); }
+    .contact-form textarea { min-height: 110px; resize: vertical; }
+
+    /* ── FOOTER ── */
+    footer { background: #0a1e3d; color: #6a8ab0; padding: 40px 24px 22px; }
+    .footer-inner { max-width: 1180px; margin: 0 auto; }
+    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 36px; margin-bottom: 28px; }
+    .footer-brand .abbr { font-size: 1.15rem; font-weight: 800; color: #fff; }
+    .footer-brand .tagline { font-size: 0.8rem; color: #6a8ab0; margin-top: 8px; line-height: 1.65; }
+    .footer-col h4 { color: #fff; font-size: 0.86rem; font-weight: 700; margin-bottom: 12px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .footer-col ul li a { font-size: 0.81rem; color: #6a8ab0; transition: color .2s; }
+    .footer-col ul li a:hover { color: #fff; }
+    hr.footer-divider { border: none; border-top: 1px solid rgba(255,255,255,0.07); margin-bottom: 18px; }
+    .footer-bottom { display: flex; justify-content: space-between; align-items: center; font-size: 0.76rem; }
+    .footer-bottom .reg { color: #4a6a90; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 920px) {
+      .hero-inner, .about-grid, .contact-inner { grid-template-columns: 1fr; gap: 36px; }
+      .mem-cards { grid-template-columns: 1fr; }
+      .events-grid, .committee-grid { grid-template-columns: 1fr 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .form-wrap { padding: 28px 20px; }
+      #hero h1 { font-size: 2rem; }
+    }
+    @media (max-width: 560px) {
+      .events-grid, .committee-grid, .manifesto-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 20px; }
+      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      #topbar .topbar-left { display: none; }
+    }
+    [id] { scroll-margin-top: 80px; }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <span class="topbar-left">🇲🇾 &nbsp;<span data-i18n="topbar_reg">Persatuan Percetakan 3D Malaysia</span> &nbsp;|&nbsp; PPM-001-10-17052021</span>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span>
+      <a href="mailto:secretary@mama.org.my">secretary@mama.org.my</a>
+      <a href="#register" data-i18n="topbar_join">Daftar Sekarang →</a>
+    </span>
+    <!-- LANGUAGE SWITCHER -->
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('ms')">BM</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+    </div>
+  </div>
+</div>
+
+<!-- ANNOUNCEMENT -->
+<div id="announce">
+  🚀 &nbsp;<span data-i18n="announce_text">MAMA kembali! Kami melancarkan semula pada 2026.</span>
+  &nbsp;<a href="#register" data-i18n="announce_link">Daftar keahlian anda hari ini →</a>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-badge">
+        <img src="mama_logo.png" alt="MAMA Logo" onerror="this.src='mama_logo.jpg'" />
+      </div>
+      <div class="logo-text">
+        <div class="abbr">MAMA</div>
+        <div class="full" data-i18n="logo_full">Malaysia Additive Manufacturing Association</div>
+      </div>
+    </div>
+    <ul class="nav-links">
+      <li><a href="#about" data-i18n="nav_about">Tentang</a></li>
+      <li><a href="#membership" data-i18n="nav_membership">Keahlian</a></li>
+      <li><a href="#events" data-i18n="nav_events">Aktiviti</a></li>
+      <li><a href="#committee" data-i18n="nav_committee">Jawatankuasa</a></li>
+      <li><a href="#contact" data-i18n="nav_contact">Hubungi</a></li>
+      <li><a href="#register" class="nav-cta" data-i18n="nav_join">Sertai MAMA</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-content">
+      <div class="hero-tag" data-i18n="hero_tag">🏭 Badan Percetakan 3D Kebangsaan</div>
+      <h1 data-i18n="hero_h1">Rumah Malaysia untuk <span>Percetakan 3D</span> &amp; Pembuatan Aditif</h1>
+      <p data-i18n="hero_p">MAMA menyatukan pengilang, pendidik, badan kerajaan, dan inovator untuk membangun ekosistem Pembuatan Aditif Malaysia — dari Perlis hingga Sabah.</p>
+      <div class="hero-btns">
+        <a href="#register" class="btn-primary" data-i18n="hero_btn1">Daftar Sebagai Ahli</a>
+        <a href="#about" class="btn-outline" data-i18n="hero_btn2">Ketahui Lebih Lanjut</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <!-- MAMA LOGO -->
+      <div style="text-align:center;margin-bottom:10px;">
+        <img src="mama_logo.png" alt="MAMA Logo"
+          style="width:180px;height:180px;border-radius:50%;object-fit:cover;box-shadow:0 0 40px rgba(128,0,255,0.35),0 0 0 3px rgba(128,0,255,0.4);"
+          onerror="this.src='mama_logo.jpg'" />
+      </div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-num">2021</div><div class="stat-label" data-i18n="stat1">Ditubuhkan &amp; Didaftar ROS</div></div>
+        <div class="stat-card"><div class="stat-num">13</div><div class="stat-label" data-i18n="stat2">Negeri Diwakili</div></div>
+        <div class="stat-card"><div class="stat-num">3</div><div class="stat-label" data-i18n="stat3">Kategori Keahlian</div></div>
+        <div class="stat-card"><div class="stat-num">100%</div><div class="stat-label" data-i18n="stat4">Digital-First 2026</div></div>
+      </div>
+      <div class="reg-badge">
+        🏛️ &nbsp;<span data-i18n="reg_badge">Berdaftar dengan Jabatan Pendaftaran Pertubuhan Malaysia (JPP / ROS)</span><br>
+        <strong>No. Pendaftaran: PPM-001-10-17052021</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div>
+        <div class="section-tag" data-i18n="about_tag">Tentang Kami</div>
+        <h2 class="section-title" data-i18n="about_title">Suara Kebangsaan Pembuatan Aditif di Malaysia</h2>
+        <p style="color:var(--grey);font-size:0.95rem;margin-bottom:18px;" data-i18n="about_p1">MAMA (Malaysia Additive Manufacturing Association), juga dikenali sebagai <em>Persatuan Percetakan 3D Malaysia</em>, telah ditubuhkan pada Februari 2021 oleh jawatankuasa pengasas seramai 21 pemimpin industri dari 7 negeri.</p>
+        <p style="color:var(--grey);font-size:0.95rem;margin-bottom:22px;" data-i18n="about_p2">Misi kami adalah untuk menyatukan semua pemain dalam rantaian nilai percetakan 3D dan pembuatan aditif — daripada pembekal peralatan, bahan, biro perkhidmatan, pendidik, hingga pengguna akhir.</p>
+        <div class="about-points">
+          <div class="about-point">
+            <div class="point-icon">🤝</div>
+            <div class="point-text">
+              <strong data-i18n="ap1_t">Rangkaian Industri</strong>
+              <span data-i18n="ap1_d">Berhubung dengan profesional, syarikat, dan institusi percetakan 3D di seluruh negara</span>
+            </div>
+          </div>
+          <div class="about-point">
+            <div class="point-icon">🎓</div>
+            <div class="point-text">
+              <strong data-i18n="ap2_t">Pendidikan &amp; Latihan</strong>
+              <span data-i18n="ap2_d">Webinar, bengkel, dan sokongan pensijilan untuk industri</span>
+            </div>
+          </div>
+          <div class="about-point">
+            <div class="point-icon">🏛️</div>
+            <div class="point-text">
+              <strong data-i18n="ap3_t">Hubungan Kerajaan</strong>
+              <span data-i18n="ap3_d">Mewakili industri bersama MITI, MIGHT, MDEC dan agensi lain</span>
+            </div>
+          </div>
+          <div class="about-point">
+            <div class="point-icon">🌐</div>
+            <div class="point-text">
+              <strong data-i18n="ap4_t">Digital-First 2026</strong>
+              <span data-i18n="ap4_d">Semua aktiviti, mesyuarat dan pendaftaran dijalankan secara dalam talian</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-tag" style="margin-bottom:14px;" data-i18n="manifesto_tag">Manifesto Kami</div>
+        <div class="manifesto-grid">
+          <div class="manifesto-card"><div class="m-num">01</div><div class="m-text" data-i18n="m1">Promosi kesedaran industri AM di Malaysia</div></div>
+          <div class="manifesto-card"><div class="m-num">02</div><div class="m-text" data-i18n="m2">Membangunkan piawaian teknikal dan amalan terbaik</div></div>
+          <div class="manifesto-card"><div class="m-num">03</div><div class="m-text" data-i18n="m3">Jambatan antara industri, akademia, dan kerajaan</div></div>
+          <div class="manifesto-card"><div class="m-num">04</div><div class="m-text" data-i18n="m4">Sokong pembangunan bakat &amp; pendidikan</div></div>
+          <div class="manifesto-card"><div class="m-num">05</div><div class="m-text" data-i18n="m5">Memudahkan padanan perniagaan antara ahli</div></div>
+          <div class="manifesto-card"><div class="m-num">06</div><div class="m-text" data-i18n="m6">Mewakili Malaysia dalam badan AM antarabangsa</div></div>
+          <div class="manifesto-card"><div class="m-num">07</div><div class="m-text" data-i18n="m7">Advokasi untuk dasar kerajaan yang menyokong</div></div>
+          <div class="manifesto-card"><div class="m-num">08</div><div class="m-text" data-i18n="m8">Penerbitan laporan industri &amp; surat berita</div></div>
+          <div class="manifesto-card"><div class="m-num">09</div><div class="m-text" data-i18n="m9">Anjur persidangan &amp; pameran AM kebangsaan</div></div>
+          <div class="manifesto-card"><div class="m-num">10</div><div class="m-text" data-i18n="m10">Sokong penggunaan teknologi AM oleh PKS</div></div>
+          <div class="manifesto-card"><div class="m-num">11</div><div class="m-text" data-i18n="m11">Galakkan penyelidikan &amp; inovasi dalam AM</div></div>
+          <div class="manifesto-card"><div class="m-num">12</div><div class="m-text" data-i18n="m12">Kekalkan kewangan Persatuan yang mampan</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMBERSHIP -->
+<section id="membership">
+  <div class="section-inner">
+    <div class="section-tag" data-i18n="mem_tag">Keahlian</div>
+    <h2 class="section-title" data-i18n="mem_title">Sertai Komuniti MAMA</h2>
+    <p class="section-sub" data-i18n="mem_sub">Sama ada anda pengamal individu, syarikat, atau institusi akademik — terdapat kategori keahlian untuk anda.</p>
+    <div class="mem-cards">
+      <div class="mem-card">
+        <div class="mem-icon">👤</div>
+        <div class="mem-type" data-i18n="mt1">Individu</div>
+        <div class="mem-price">RM 50</div>
+        <div class="mem-price-sub" data-i18n="mp1">Pendaftaran + RM 50/tahun yuran tahunan</div>
+        <ul>
+          <li data-i18n="mi1_1">Akses ke direktori ahli</li>
+          <li data-i18n="mi1_2">Jemputan ke semua acara MAMA</li>
+          <li data-i18n="mi1_3">Langganan surat berita eRoses</li>
+          <li data-i18n="mi1_4">Peluang rangkaian &amp; kerjasama</li>
+          <li data-i18n="mi1_5">Sijil keahlian digital</li>
+        </ul>
+        <a href="#register" class="btn-mem" data-i18n="mem_reg_btn">Daftar Sekarang</a>
+      </div>
+      <div class="mem-card featured">
+        <div class="mem-icon">🏢</div>
+        <div class="mem-type" data-i18n="mt2">Korporat / Organisasi</div>
+        <div class="mem-price">RM 50</div>
+        <div class="mem-price-sub" data-i18n="mp2">Pendaftaran + RM 100/tahun yuran tahunan</div>
+        <ul>
+          <li data-i18n="mi2_1">Semua manfaat Individu</li>
+          <li data-i18n="mi2_2">Profil syarikat dalam direktori ahli</li>
+          <li data-i18n="mi2_3">Peluang penajaan acara keutamaan</li>
+          <li data-i18n="mi2_4">Kemudahan padanan perniagaan</li>
+          <li data-i18n="mi2_5">Logo di laman web MAMA</li>
+          <li data-i18n="mi2_6">Hak mengundi di AGM</li>
+        </ul>
+        <a href="#register" class="btn-mem" data-i18n="mem_reg_btn">Daftar Sekarang</a>
+      </div>
+      <div class="mem-card">
+        <div class="mem-icon">🎓</div>
+        <div class="mem-type" data-i18n="mt3">Akademik / Institusi</div>
+        <div class="mem-price">RM 50</div>
+        <div class="mem-price-sub" data-i18n="mp3">Pendaftaran + RM 50/tahun yuran tahunan</div>
+        <ul>
+          <li data-i18n="mi3_1">Universiti, kolej atau politeknik</li>
+          <li data-i18n="mi3_2">Rangkaian kerjasama penyelidikan</li>
+          <li data-i18n="mi3_3">Anjur webinar pendidikan bersama</li>
+          <li data-i18n="mi3_4">Sokongan cawangan pelajar</li>
+          <li data-i18n="mi3_5">Jaringan industri-akademia</li>
+        </ul>
+        <a href="#register" class="btn-mem" data-i18n="mem_reg_btn">Daftar Sekarang</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REGISTER FORM -->
+<section id="register">
+  <div class="section-inner">
+    <div style="text-align:center;margin-bottom:38px;">
+      <div class="section-tag" data-i18n="reg_tag">Pendaftaran Dalam Talian</div>
+      <h2 class="section-title" style="text-align:center;" data-i18n="reg_title">Jadi Ahli MAMA</h2>
+      <p style="color:var(--grey);font-size:0.95rem;" data-i18n="reg_sub">Isi borang di bawah. Urusetia kami akan menghubungi anda dalam masa 3 hari bekerja dengan maklumat pembayaran.</p>
+    </div>
+    <div class="form-wrap">
+      <div class="form-type-toggle">
+        <div class="toggle-btn active" onclick="setType('individual',this)" data-i18n="toggle_ind">👤 Individu / Akademik</div>
+        <div class="toggle-btn" onclick="setType('corporate',this)" data-i18n="toggle_corp">🏢 Korporat / Organisasi</div>
+      </div>
+      <div class="fee-note" id="feeNote">
+        <strong data-i18n="fee_label">Yuran Keahlian Individu:</strong>
+        <span data-i18n="fee_ind_text">RM 50 (pendaftaran satu kali) + RM 50/tahun (yuran tahunan). Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.</span>
+      </div>
+      <form id="regForm" onsubmit="submitForm(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="f_name">Nama Penuh <span class="required">*</span></label>
+            <input type="text" id="fullname" data-i18n-ph="f_name_ph" placeholder="Seperti dalam IC / Pasport" required />
+          </div>
+          <div class="form-group" id="orgGroup" style="display:none;">
+            <label data-i18n="f_org">Nama Organisasi <span class="required">*</span></label>
+            <input type="text" id="orgname" data-i18n-ph="f_org_ph" placeholder="Nama syarikat / institusi" />
+          </div>
+          <div class="form-group" id="icGroup">
+            <label data-i18n="f_ic">No. IC / Pasport <span class="required">*</span></label>
+            <input type="text" id="icnum" placeholder="cth. 900101-01-1234" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="f_email">Emel <span class="required">*</span></label>
+            <input type="email" id="email" data-i18n-ph="f_email_ph" placeholder="emel@anda.com" required />
+          </div>
+          <div class="form-group">
+            <label data-i18n="f_phone">No. Telefon <span class="required">*</span></label>
+            <input type="tel" id="phone" placeholder="+60 12-345 6789" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="f_state">Negeri <span class="required">*</span></label>
+            <select id="state" required>
+              <option value="" data-i18n="f_state_ph">— Pilih Negeri —</option>
+              <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+              <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+              <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+              <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+              <option>Terengganu</option><option>W.P. Kuala Lumpur</option>
+              <option>W.P. Labuan</option><option>W.P. Putrajaya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="f_industry">Industri / Bidang <span class="required">*</span></label>
+            <select id="industry" required>
+              <option value="" data-i18n="f_industry_ph">— Pilih —</option>
+              <option data-i18n="ind1">Biro Perkhidmatan Percetakan 3D</option>
+              <option data-i18n="ind2">Pembekal Peralatan / Mesin</option>
+              <option data-i18n="ind3">Pembekal Bahan / Filamen</option>
+              <option data-i18n="ind4">Rekabentuk Produk / Kejuruteraan</option>
+              <option data-i18n="ind5">Pendidikan / Latihan</option>
+              <option data-i18n="ind6">Perubatan / Penjagaan Kesihatan</option>
+              <option data-i18n="ind7">Aeroangkasa / Pertahanan</option>
+              <option data-i18n="ind8">Automotif</option>
+              <option data-i18n="ind9">Pembinaan / Senibina</option>
+              <option data-i18n="ind10">Produk Pengguna</option>
+              <option data-i18n="ind11">Penyelidikan &amp; Pembangunan</option>
+              <option data-i18n="ind12">Kerajaan / NGO</option>
+              <option data-i18n="ind13">Lain-lain</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n="f_source">Bagaimana anda tahu tentang MAMA?</label>
+          <select id="source">
+            <option value="" data-i18n="f_source_ph">— Pilihan —</option>
+            <option>Facebook / Media Sosial</option>
+            <option>LinkedIn</option>
+            <option data-i18n="src_ref">Dirujuk oleh ahli</option>
+            <option data-i18n="src_event">Acara industri</option>
+            <option>Google Search</option>
+            <option>WhatsApp / Telegram</option>
+            <option data-i18n="src_other">Lain-lain</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-i18n="f_intro">Pengenalan Ringkas (pilihan)</label>
+          <textarea id="intro" data-i18n-ph="f_intro_ph" placeholder="Ceritakan tentang diri anda atau organisasi anda dan minat anda dalam Pembuatan Aditif..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" required style="width:auto;display:inline;margin-right:8px;" />
+            <span data-i18n="f_agree">Saya bersetuju dengan Undang-Undang Persatuan MAMA dan mengesahkan semua maklumat di atas adalah tepat.</span>
+            <span class="required">*</span>
+          </label>
+        </div>
+        <button type="submit" class="submit-btn" data-i18n="f_submit">Hantar Permohonan Keahlian →</button>
+        <div class="form-footer-note" data-i18n="f_note">Data anda adalah sulit dan hanya digunakan untuk tujuan keahlian MAMA.</div>
+      </form>
+      <div class="success-msg" id="successMsg" data-i18n="f_success">
+        ✅ Terima kasih! Permohonan anda telah diterima. Urusetia kami akan menghubungi anda dalam masa 3 hari bekerja dengan maklumat pembayaran dan butiran keahlian anda.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section id="events">
+  <div class="section-inner">
+    <div class="section-tag" data-i18n="ev_tag">Aktiviti 2026</div>
+    <h2 class="section-title" data-i18n="ev_title">Aktiviti Akan Datang</h2>
+    <p class="section-sub" data-i18n="ev_sub">Semua aktiviti MAMA pada 2026 diadakan secara dalam talian — sertai dari mana-mana sahaja di Malaysia.</p>
+    <div class="events-grid">
+      <div class="event-card">
+        <div class="event-top">
+          <div class="event-date">📅 <span data-i18n="ev1_date">April 2026</span></div>
+          <div class="event-title" data-i18n="ev1_title">Mesyuarat Jawatankuasa Kecemasan — Kebangkitan MAMA 2026</div>
+        </div>
+        <div class="event-body">
+          <div class="event-mode" data-i18n="online_zoom">🟢 Dalam Talian (Zoom)</div>
+          <p class="event-desc" data-i18n="ev1_desc">Mesyuarat rasmi untuk meluluskan Pelan Tindakan 2026, mengesahkan peranan, dan menghidupkan semula operasi MAMA. Untuk ahli jawatankuasa sahaja.</p>
+          <span class="event-link" data-i18n="ev_members_only">Ahli Sahaja →</span>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-top">
+          <div class="event-date">📅 <span data-i18n="ev2_date">Mei – Jun 2026</span></div>
+          <div class="event-title" data-i18n="ev2_title">Mesyuarat Agung Tahunan (AGM) 2026 + Pemilihan Jawatankuasa</div>
+        </div>
+        <div class="event-body">
+          <div class="event-mode" data-i18n="online_zoom">🟢 Dalam Talian (Zoom)</div>
+          <p class="event-desc" data-i18n="ev2_desc">AGM MAMA 2026 — semakan akaun, pembentangan pelan 2026, dan pemilihan jawatankuasa baru. Terbuka kepada semua ahli berdaftar.</p>
+          <a href="#register" class="event-link" data-i18n="ev_reg_attend">Daftar untuk Hadir →</a>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-top">
+          <div class="event-date">📅 <span data-i18n="ev3_date">Jun 2026</span></div>
+          <div class="event-title" data-i18n="ev3_title">Webinar: Keadaan Percetakan 3D di Malaysia 2026</div>
+        </div>
+        <div class="event-body">
+          <div class="event-mode" data-i18n="online_free">🟢 Dalam Talian — PERCUMA untuk Ahli</div>
+          <p class="event-desc" data-i18n="ev3_desc">Gambaran keseluruhan industri merangkumi trend pasaran, kemaskini teknologi, inisiatif kerajaan, dan peluang untuk perniagaan AM Malaysia.</p>
+          <a href="#register" class="event-link" data-i18n="ev_join_member">Sertai sebagai Ahli →</a>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-top">
+          <div class="event-date">📅 <span data-i18n="ev4_date">Ogos 2026</span></div>
+          <div class="event-title" data-i18n="ev4_title">Bengkel Dalam Talian: Bahan, Proses &amp; Aplikasi AM</div>
+        </div>
+        <div class="event-body">
+          <div class="event-mode" data-i18n="online_inter">🟢 Dalam Talian (Interaktif)</div>
+          <p class="event-desc" data-i18n="ev4_desc">Bengkel dalam talian merangkumi FDM, SLA, SLS, logam AM, dan pemilihan bahan untuk aplikasi industri.</p>
+          <a href="#register" class="event-link" data-i18n="ev_reg_interest">Daftar Minat →</a>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-top">
+          <div class="event-date">📅 <span data-i18n="ev5_date">Q3 2026</span></div>
+          <div class="event-title" data-i18n="ev5_title">Surat Berita eRoses — Isu Pelancaran Semula</div>
+        </div>
+        <div class="event-body">
+          <div class="event-mode" data-i18n="ev5_mode">📰 Surat Berita Digital</div>
+          <p class="event-desc" data-i18n="ev5_desc">Surat berita industri rasmi MAMA kembali dengan sorotan ahli, kemaskini teknologi, dan berita industri. Diterbitkan setiap suku tahun.</p>
+          <a href="#register" class="event-link" data-i18n="ev5_link">Langgan melalui Keahlian →</a>
+        </div>
+      </div>
+      <div class="event-card">
+        <div class="event-top">
+          <div class="event-date">📅 <span data-i18n="ev6_date">Oktober – November 2026</span></div>
+          <div class="event-title" data-i18n="ev6_title">Persidangan &amp; Ekspo Maya MAMA 2026</div>
+        </div>
+        <div class="event-body">
+          <div class="event-mode" data-i18n="ev6_mode">🟢 Dalam Talian (Pelbagai Hari)</div>
+          <p class="event-desc" data-i18n="ev6_desc">Acara tahunan utama MAMA — perbincangan panel, pameran produk, mesyuarat B2B, dan Anugerah Ahli MAMA. Terbuka kepada orang ramai.</p>
+          <a href="#register" class="event-link" data-i18n="ev6_link">Pra-Daftar →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMITTEE -->
+<section id="committee">
+  <div class="section-inner">
+    <div class="section-tag" data-i18n="com_tag">Kepimpinan</div>
+    <h2 class="section-title" data-i18n="com_title">Jawatankuasa 2023 – 2026</h2>
+    <p class="section-sub" data-i18n="com_sub">Ahli jawatankuasa sukarela kami mewakili keluasan industri percetakan 3D Malaysia merentasi pelbagai negeri.</p>
+    <div class="committee-grid">
+      <!-- President -->
+      <div class="member-card" style="border:2px solid var(--accent);grid-column:span 1;">
+        <div class="member-avatar" style="background:var(--accent);width:72px;height:72px;font-size:1.4rem;">BM</div>
+        <div class="member-name">Bruce Mui</div>
+        <div class="member-pos" data-i18n="pos_president">Pengerusi (Presiden)</div>
+        <div class="member-org">B3D Group Sdn Bhd / 3DForger</div>
+        <div class="member-state">Perak</div>
+      </div>
+      <!-- Deputy President -->
+      <div class="member-card">
+        <div class="member-avatar">IA</div>
+        <div class="member-name">Dr. Izhar Aziz</div>
+        <div class="member-pos" data-i18n="pos_dep">Timbalan Pengerusi</div>
+        <div class="member-org">3D Gens Sdn Bhd</div>
+        <div class="member-state">Malaysia</div>
+      </div>
+      <!-- Secretary -->
+      <div class="member-card">
+        <div class="member-avatar">WCH</div>
+        <div class="member-name">En. Wan Cheng Huat</div>
+        <div class="member-pos" data-i18n="pos_sec">Setiausaha</div>
+        <div class="member-org">Magnificent Miniatures</div>
+        <div class="member-state">Selangor</div>
+      </div>
+      <!-- Treasurer -->
+      <div class="member-card">
+        <div class="member-avatar">JL</div>
+        <div class="member-name">Jib Lan</div>
+        <div class="member-pos" data-i18n="pos_tres">Bendahari</div>
+        <div class="member-org">AA3D Technology</div>
+        <div class="member-state">Malaysia</div>
+      </div>
+      <!-- Exco Industrial -->
+      <div class="member-card">
+        <div class="member-avatar">SW</div>
+        <div class="member-name">Sean Wu</div>
+        <div class="member-pos" data-i18n="pos_exco_ind">Exco (Industri)</div>
+        <div class="member-org">Positive Yield Sdn Bhd</div>
+        <div class="member-state">Malaysia</div>
+      </div>
+      <!-- Exco Government -->
+      <div class="member-card">
+        <div class="member-avatar">AH</div>
+        <div class="member-name">En. Ahmad Hilmi Muhammad</div>
+        <div class="member-pos" data-i18n="pos_exco_gov">Exco (Kerajaan)</div>
+        <div class="member-org">Pebble3D</div>
+        <div class="member-state">Kelantan</div>
+      </div>
+      <!-- Exco Education -->
+      <div class="member-card">
+        <div class="member-avatar">DR</div>
+        <div class="member-name">Darween Reza</div>
+        <div class="member-pos" data-i18n="pos_exco_edu">Exco (Pendidikan)</div>
+        <div class="member-org">My Conceptual Robotics</div>
+        <div class="member-state">Malaysia</div>
+      </div>
+      <!-- Exco Media -->
+      <div class="member-card">
+        <div class="member-avatar">AF</div>
+        <div class="member-name">En. Ahmad Firdaus</div>
+        <div class="member-pos" data-i18n="pos_exco_media">Exco (Media / Promosi)</div>
+        <div class="member-org">IDSM</div>
+        <div class="member-state">Terengganu</div>
+      </div>
+      <!-- Advisor -->
+      <div class="member-card" style="border:1.5px dashed #bbb;">
+        <div class="member-avatar" style="background:#7a7a7a;">DK</div>
+        <div class="member-name">Dr. Khurram</div>
+        <div class="member-pos" data-i18n="pos_advisor">Penasihat</div>
+        <div class="member-org">—</div>
+        <div class="member-state">Malaysia</div>
+      </div>
+    </div>
+    <!-- AGM Note -->
+    <div style="margin-top:32px;background:#fff;border-left:4px solid var(--accent);border-radius:0 12px 12px 0;padding:16px 20px;box-shadow:0 2px 12px rgba(0,0,0,0.06);">
+      <p style="font-size:0.87rem;color:#555;" data-i18n="agm_note">
+        ✅ <strong data-i18n="agm_note_bold">Dipilih pada AGM 16 Disember 2022 (dalam talian)</strong> — Jawatankuasa baru menggantikan jawatankuasa pengasas bagi tempoh 2023–2024.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div>
+      <div class="section-tag" style="background:rgba(255,255,255,0.15);color:#fff;" data-i18n="con_tag">Hubungi Kami</div>
+      <h2 class="section-title" data-i18n="con_title">Hubungi MAMA</h2>
+      <p style="color:#90afd4;font-size:0.95rem;margin-bottom:8px;" data-i18n="con_sub">Hubungi kami untuk pertanyaan keahlian, kerjasama acara, penajaan, atau sebarang perkara berkaitan persatuan.</p>
+      <div class="contact-items">
+        <div class="contact-item"><div class="c-icon">📍</div><div><div class="c-label" data-i18n="con_addr_l">Alamat Berdaftar</div><div class="c-value">E1-03-07, Level 3, Block E1, Sunway Geo Avenue,<br>Jalan Lagoon Selatan, 47500 Subang Jaya, Selangor</div></div></div>
+        <div class="contact-item"><div class="c-icon">✉️</div><div><div class="c-label">Email</div><div class="c-value">secretary@mama.org.my</div></div></div>
+        <div class="contact-item"><div class="c-icon">🏛️</div><div><div class="c-label" data-i18n="con_ros_l">No. Pendaftaran ROS</div><div class="c-value">PPM-001-10-17052021</div></div></div>
+        <div class="contact-item"><div class="c-icon">🌐</div><div><div class="c-label" data-i18n="con_social_l">Ikuti Kami</div><div class="c-value">Facebook &nbsp;|&nbsp; LinkedIn &nbsp;|&nbsp; Instagram</div></div></div>
+      </div>
+    </div>
+    <div>
+      <p style="color:#90afd4;font-size:0.84rem;margin-bottom:16px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;" data-i18n="con_form_label">Hantar Mesej</p>
+      <form class="contact-form" onsubmit="submitContact(event)">
+        <input type="text" data-i18n-ph="con_f_name" placeholder="Nama Anda" required />
+        <input type="email" data-i18n-ph="con_f_email" placeholder="Emel Anda" required />
+        <input type="text" data-i18n-ph="con_f_subj" placeholder="Subjek" />
+        <textarea data-i18n-ph="con_f_msg" placeholder="Mesej anda..."></textarea>
+        <button type="submit" class="btn-primary" data-i18n="con_f_send">Hantar Mesej</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="mama_logo.png" alt="MAMA" style="width:60px;height:60px;border-radius:50%;margin-bottom:10px;display:block;" onerror="this.src='mama_logo.jpg'" />
+        <div class="abbr">MAMA</div>
+        <div class="tagline" data-i18n="footer_tagline">Malaysia Additive Manufacturing Association<br>Persatuan Percetakan 3D Malaysia<br><br>Menyatukan komuniti Percetakan 3D &amp; Pembuatan Aditif Malaysia sejak 2021.</div>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="fc1_h">Persatuan</h4>
+        <ul>
+          <li><a href="#about" data-i18n="fc1_1">Tentang MAMA</a></li>
+          <li><a href="#committee" data-i18n="fc1_2">Jawatankuasa</a></li>
+          <li><a href="#about" data-i18n="fc1_3">Manifesto</a></li>
+          <li><a href="#" data-i18n="fc1_4">Undang-Undang</a></li>
+          <li><a href="#" data-i18n="fc1_5">Laporan Tahunan</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="fc2_h">Keahlian</h4>
+        <ul>
+          <li><a href="#membership" data-i18n="fc2_1">Individu</a></li>
+          <li><a href="#membership" data-i18n="fc2_2">Korporat</a></li>
+          <li><a href="#membership" data-i18n="fc2_3">Akademik</a></li>
+          <li><a href="#register" data-i18n="fc2_4">Daftar Sekarang</a></li>
+          <li><a href="#" data-i18n="fc2_5">Perbaharui Keahlian</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="fc3_h">Sumber</h4>
+        <ul>
+          <li><a href="#events" data-i18n="fc3_1">Aktiviti 2026</a></li>
+          <li><a href="#" data-i18n="fc3_2">eRoses Newsletter</a></li>
+          <li><a href="#" data-i18n="fc3_3">Berita Industri</a></li>
+          <li><a href="#" data-i18n="fc3_4">Direktori Ahli</a></li>
+          <li><a href="#contact" data-i18n="fc3_5">Hubungi</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr class="footer-divider" />
+    <div class="footer-bottom">
+      <span data-i18n="footer_copy">© 2026 Malaysia Additive Manufacturing Association. Hak cipta terpelihara.</span>
+      <span class="reg">Reg. No: PPM-001-10-17052021 &nbsp;|&nbsp; <span data-i18n="footer_ros">Berdaftar dengan ROS Malaysia</span></span>
+    </div>
+  </div>
+</footer>
+
+<!-- DUMMY STRIPE MODAL -->
+<div class="stripe-overlay" id="stripeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
+  <div style="background:#fff;width:400px;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.3);animation:popIn .3s ease-out">
+    <div style="background:#5469d4;padding:24px;text-align:center;color:#fff">
+      <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px">MAMA Membership</div>
+      <div id="stripeAmount" style="font-size:1.6rem;font-weight:800">RM 50.00</div>
+    </div>
+    <div style="padding:24px">
+      <div style="font-size:0.85rem;color:#777;text-align:center;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:6px">
+        <span style="display:inline-block;width:12px;height:12px;background:#5469d4;border-radius:50%"></span> Test Mode Payment
+      </div>
+      <button onclick="processMockPayment()" id="stripePayBtn" style="width:100%;background:#5469d4;color:#fff;border:none;padding:14px;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s">Pay with Card</button>
+      <button onclick="closeStripeModal()" style="width:100%;background:none;color:#888;border:none;padding:12px;margin-top:8px;font-size:0.85rem;cursor:pointer">Cancel</button>
+      <div id="stripeSpinner" style="display:none;text-align:center;padding:20px;color:#5469d4;font-weight:600">Processing...</div>
+    </div>
+  </div>
+</div>
+<style>@keyframes popIn { from { opacity:0; transform:scale(0.95) } to { opacity:1; transform:scale(1) } }</style>
+
+<script>
+/* ══════════════════════════════════════════════
+   TRANSLATIONS
+══════════════════════════════════════════════ */
+const T = {
+  ms: {
+    topbar_reg: "Persatuan Percetakan 3D Malaysia",
+    topbar_join: "Daftar Sekarang →",
+    announce_text: "MAMA kembali! Kami melancarkan semula pada 2026.",
+    announce_link: "Daftar keahlian anda hari ini →",
+    logo_full: "Malaysia Additive Manufacturing Association",
+    nav_about: "Tentang", nav_membership: "Keahlian", nav_events: "Aktiviti",
+    nav_committee: "Jawatankuasa", nav_contact: "Hubungi", nav_join: "Sertai MAMA",
+    hero_tag: "🏭 Badan Percetakan 3D Kebangsaan",
+    hero_h1: 'Rumah Malaysia untuk <span>Percetakan 3D</span> &amp; Pembuatan Aditif',
+    hero_p: "MAMA menyatukan pengilang, pendidik, badan kerajaan, dan inovator untuk membangun ekosistem Pembuatan Aditif Malaysia — dari Perlis hingga Sabah.",
+    hero_btn1: "Daftar Sebagai Ahli", hero_btn2: "Ketahui Lebih Lanjut",
+    stat1: "Ditubuhkan &amp; Didaftar ROS", stat2: "Negeri Diwakili",
+    stat3: "Kategori Keahlian", stat4: "Digital-First 2026",
+    reg_badge: "Berdaftar dengan Jabatan Pendaftaran Pertubuhan Malaysia (JPP / ROS)",
+    about_tag: "Tentang Kami",
+    about_title: "Suara Kebangsaan Pembuatan Aditif di Malaysia",
+    about_p1: 'MAMA (Malaysia Additive Manufacturing Association), juga dikenali sebagai <em>Persatuan Percetakan 3D Malaysia</em>, telah ditubuhkan pada Februari 2021 oleh jawatankuasa pengasas seramai 21 pemimpin industri dari 7 negeri.',
+    about_p2: "Misi kami adalah untuk menyatukan semua pemain dalam rantaian nilai percetakan 3D dan pembuatan aditif — daripada pembekal peralatan, bahan, biro perkhidmatan, pendidik, hingga pengguna akhir.",
+    ap1_t:"Rangkaian Industri", ap1_d:"Berhubung dengan profesional, syarikat, dan institusi percetakan 3D di seluruh negara",
+    ap2_t:"Pendidikan &amp; Latihan", ap2_d:"Webinar, bengkel, dan sokongan pensijilan untuk industri",
+    ap3_t:"Hubungan Kerajaan", ap3_d:"Mewakili industri bersama MITI, MIGHT, MDEC dan agensi lain",
+    ap4_t:"Digital-First 2026", ap4_d:"Semua aktiviti, mesyuarat dan pendaftaran dijalankan secara dalam talian",
+    manifesto_tag:"Manifesto Kami",
+    m1:"Promosi kesedaran industri AM di Malaysia", m2:"Membangunkan piawaian teknikal dan amalan terbaik",
+    m3:"Jambatan antara industri, akademia, dan kerajaan", m4:"Sokong pembangunan bakat &amp; pendidikan",
+    m5:"Memudahkan padanan perniagaan antara ahli", m6:"Mewakili Malaysia dalam badan AM antarabangsa",
+    m7:"Advokasi untuk dasar kerajaan yang menyokong", m8:"Penerbitan laporan industri &amp; surat berita",
+    m9:"Anjur persidangan &amp; pameran AM kebangsaan", m10:"Sokong penggunaan teknologi AM oleh PKS",
+    m11:"Galakkan penyelidikan &amp; inovasi dalam AM", m12:"Kekalkan kewangan Persatuan yang mampan",
+    mem_tag:"Keahlian", mem_title:"Sertai Komuniti MAMA",
+    mem_sub:"Sama ada anda pengamal individu, syarikat, atau institusi akademik — terdapat kategori keahlian untuk anda.",
+    mt1:"Individu", mp1:"Pendaftaran + RM 50/tahun yuran tahunan",
+    mi1_1:"Akses ke direktori ahli", mi1_2:"Jemputan ke semua acara MAMA",
+    mi1_3:"Langganan surat berita eRoses", mi1_4:"Peluang rangkaian &amp; kerjasama", mi1_5:"Sijil keahlian digital",
+    mt2:"Korporat / Organisasi", mp2:"Pendaftaran + RM 100/tahun yuran tahunan",
+    mi2_1:"Semua manfaat Individu", mi2_2:"Profil syarikat dalam direktori ahli",
+    mi2_3:"Peluang penajaan acara keutamaan", mi2_4:"Kemudahan padanan perniagaan",
+    mi2_5:"Logo di laman web MAMA", mi2_6:"Hak mengundi di AGM",
+    mt3:"Akademik / Institusi", mp3:"Pendaftaran + RM 50/tahun yuran tahunan",
+    mi3_1:"Universiti, kolej atau politeknik", mi3_2:"Rangkaian kerjasama penyelidikan",
+    mi3_3:"Anjur webinar pendidikan bersama", mi3_4:"Sokongan cawangan pelajar", mi3_5:"Jaringan industri-akademia",
+    mem_reg_btn:"Daftar Sekarang",
+    reg_tag:"Pendaftaran Dalam Talian", reg_title:"Jadi Ahli MAMA",
+    reg_sub:"Isi borang di bawah. Urusetia kami akan menghubungi anda dalam masa 3 hari bekerja dengan maklumat pembayaran.",
+    toggle_ind:"👤 Individu / Akademik", toggle_corp:"🏢 Korporat / Organisasi",
+    fee_label:"Yuran Keahlian Individu:", fee_ind_text:"RM 50 (pendaftaran satu kali) + RM 50/tahun (yuran tahunan). Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.",
+    fee_corp_text:"RM 50 (pendaftaran satu kali) + RM 100/tahun (yuran tahunan). Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.",
+    fee_corp_label:"Yuran Keahlian Korporat:",
+    f_name:"Nama Penuh", f_name_ph:"Seperti dalam IC / Pasport",
+    f_org:"Nama Organisasi", f_org_ph:"Nama syarikat / institusi",
+    f_ic:"No. IC / Pasport",
+    f_email:"Emel", f_email_ph:"emel@anda.com",
+    f_phone:"No. Telefon",
+    f_state:"Negeri", f_state_ph:"— Pilih Negeri —",
+    f_industry:"Industri / Bidang", f_industry_ph:"— Pilih —",
+    ind1:"Biro Perkhidmatan Percetakan 3D", ind2:"Pembekal Peralatan / Mesin",
+    ind3:"Pembekal Bahan / Filamen", ind4:"Rekabentuk Produk / Kejuruteraan",
+    ind5:"Pendidikan / Latihan", ind6:"Perubatan / Penjagaan Kesihatan",
+    ind7:"Aeroangkasa / Pertahanan", ind8:"Automotif",
+    ind9:"Pembinaan / Senibina", ind10:"Produk Pengguna",
+    ind11:"Penyelidikan &amp; Pembangunan", ind12:"Kerajaan / NGO", ind13:"Lain-lain",
+    f_source:"Bagaimana anda tahu tentang MAMA?", f_source_ph:"— Pilihan —",
+    src_ref:"Dirujuk oleh ahli", src_event:"Acara industri", src_other:"Lain-lain",
+    f_intro:"Pengenalan Ringkas (pilihan)", f_intro_ph:"Ceritakan tentang diri anda atau organisasi anda...",
+    f_agree:"Saya bersetuju dengan Undang-Undang Persatuan MAMA dan mengesahkan semua maklumat di atas adalah tepat.",
+    f_submit:"Hantar Permohonan Keahlian →",
+    f_note:"Data anda adalah sulit dan hanya digunakan untuk tujuan keahlian MAMA.",
+    f_success:"✅ Terima kasih! Permohonan anda telah diterima. Urusetia kami akan menghubungi anda dalam masa 3 hari bekerja.",
+    ev_tag:"Aktiviti 2026", ev_title:"Aktiviti Akan Datang",
+    ev_sub:"Semua aktiviti MAMA pada 2026 diadakan secara dalam talian — sertai dari mana-mana sahaja di Malaysia.",
+    ev1_date:"April 2026", ev1_title:"Mesyuarat Jawatankuasa Kecemasan — Kebangkitan MAMA 2026",
+    ev1_desc:"Mesyuarat rasmi untuk meluluskan Pelan Tindakan 2026, mengesahkan peranan, dan menghidupkan semula operasi MAMA. Untuk ahli jawatankuasa sahaja.",
+    ev_members_only:"Ahli Sahaja →",
+    ev2_date:"Mei – Jun 2026", ev2_title:"Mesyuarat Agung Tahunan (AGM) 2026 + Pemilihan Jawatankuasa",
+    ev2_desc:"AGM MAMA 2026 — semakan akaun, pembentangan pelan 2026, dan pemilihan jawatankuasa baru. Terbuka kepada semua ahli berdaftar.",
+    ev_reg_attend:"Daftar untuk Hadir →",
+    ev3_date:"Jun 2026", ev3_title:"Webinar: Keadaan Percetakan 3D di Malaysia 2026",
+    ev3_desc:"Gambaran keseluruhan industri merangkumi trend pasaran, kemaskini teknologi, inisiatif kerajaan, dan peluang untuk perniagaan AM Malaysia.",
+    ev4_date:"Ogos 2026", ev4_title:"Bengkel Dalam Talian: Bahan, Proses &amp; Aplikasi AM",
+    ev4_desc:"Bengkel dalam talian merangkumi FDM, SLA, SLS, logam AM, dan pemilihan bahan untuk aplikasi industri.",
+    ev5_date:"Q3 2026", ev5_title:"Surat Berita eRoses — Isu Pelancaran Semula",
+    ev5_desc:"Surat berita industri rasmi MAMA kembali dengan sorotan ahli, kemaskini teknologi, dan berita industri. Diterbitkan setiap suku tahun.",
+    ev5_mode:"📰 Surat Berita Digital", ev5_link:"Langgan melalui Keahlian →",
+    ev6_date:"Oktober – November 2026", ev6_title:"Persidangan &amp; Ekspo Maya MAMA 2026",
+    ev6_desc:"Acara tahunan utama MAMA — perbincangan panel, pameran produk, mesyuarat B2B, dan Anugerah Ahli MAMA. Terbuka kepada orang ramai.",
+    ev6_mode:"🟢 Dalam Talian (Pelbagai Hari)", ev6_link:"Pra-Daftar →",
+    online_zoom:"🟢 Dalam Talian (Zoom)", online_free:"🟢 Dalam Talian — PERCUMA untuk Ahli",
+    online_inter:"🟢 Dalam Talian (Interaktif)", ev_join_member:"Sertai sebagai Ahli →",
+    ev_reg_interest:"Daftar Minat →",
+    com_tag:"Kepimpinan", com_title:"Jawatankuasa 2023",
+    com_sub:"Dipilih pada AGM 16 Disember 2022. Ahli jawatankuasa sukarela kami mewakili industri percetakan 3D Malaysia merentasi pelbagai negeri.",
+    pos_president:"Pengerusi (Presiden)", pos_dep:"Timbalan Pengerusi",
+    pos_vp_ind:"Naib Pengerusi (Industri)", pos_vp_edu:"Naib Pengerusi (Pendidikan)",
+    pos_sec:"Setiausaha", pos_tres:"Bendahari", pos_asec:"Penolong Bendahari", pos_atres:"Penolong Setiausaha",
+    pos_exco_ind:"Exco (Industri)", pos_exco_gov:"Exco (Kerajaan)",
+    pos_exco_edu:"Exco (Pendidikan)", pos_exco_media:"Exco (Media / Promosi)", pos_advisor:"Penasihat",
+    agm_note:"✅ <strong>Dipilih pada AGM 16 Disember 2022 (dalam talian)</strong> — Jawatankuasa baru menggantikan jawatankuasa pengasas bagi tempoh 2023.",
+    agm_note_bold:"Dipilih pada AGM 16 Disember 2022 (dalam talian)",
+    con_tag:"Hubungi Kami", con_title:"Hubungi MAMA",
+    con_sub:"Hubungi kami untuk pertanyaan keahlian, kerjasama acara, penajaan, atau sebarang perkara berkaitan persatuan.",
+    con_addr_l:"Alamat Berdaftar", con_ros_l:"No. Pendaftaran ROS",
+    con_social_l:"Ikuti Kami", con_form_label:"Hantar Mesej",
+    con_f_name:"Nama Anda", con_f_email:"Emel Anda", con_f_subj:"Subjek", con_f_msg:"Mesej anda...", con_f_send:"Hantar Mesej",
+    footer_tagline:"Malaysia Additive Manufacturing Association<br>Persatuan Percetakan 3D Malaysia<br><br>Menyatukan komuniti Percetakan 3D &amp; Pembuatan Aditif Malaysia sejak 2021.",
+    fc1_h:"Persatuan", fc1_1:"Tentang MAMA", fc1_2:"Jawatankuasa", fc1_3:"Manifesto", fc1_4:"Undang-Undang", fc1_5:"Laporan Tahunan",
+    fc2_h:"Keahlian", fc2_1:"Individu", fc2_2:"Korporat", fc2_3:"Akademik", fc2_4:"Daftar Sekarang", fc2_5:"Perbaharui Keahlian",
+    fc3_h:"Sumber", fc3_1:"Aktiviti 2026", fc3_2:"eRoses Newsletter", fc3_3:"Berita Industri", fc3_4:"Direktori Ahli", fc3_5:"Hubungi",
+    footer_copy:"© 2026 Malaysia Additive Manufacturing Association. Hak cipta terpelihara.",
+    footer_ros:"Berdaftar dengan ROS Malaysia",
+  },
+  en: {
+    topbar_reg:"Persatuan Percetakan 3D Malaysia",
+    topbar_join:"Join Now →",
+    announce_text:"MAMA is back! We are relaunching in 2026.",
+    announce_link:"Register your membership today →",
+    logo_full:"Malaysia Additive Manufacturing Association",
+    nav_about:"About", nav_membership:"Membership", nav_events:"Events",
+    nav_committee:"Committee", nav_contact:"Contact", nav_join:"Join MAMA",
+    hero_tag:"🏭 National Additive Manufacturing Body",
+    hero_h1:'Malaysia\'s Home for <span>3D Printing</span> &amp; Additive Manufacturing',
+    hero_p:"MAMA unites manufacturers, educators, government bodies, and innovators to develop Malaysia's Additive Manufacturing ecosystem — from Perlis to Sabah.",
+    hero_btn1:"Join as Member", hero_btn2:"Learn More",
+    stat1:"Founded &amp; ROS Registered", stat2:"States Represented",
+    stat3:"Membership Categories", stat4:"Digital-First 2026",
+    reg_badge:"Registered with the Registrar of Societies Malaysia (ROS / JPP)",
+    about_tag:"Who We Are",
+    about_title:"The National Voice for Additive Manufacturing in Malaysia",
+    about_p1:'MAMA (Malaysia Additive Manufacturing Association), also known as <em>Persatuan Percetakan 3D Malaysia</em>, was established in February 2021 by a founding committee of 21 industry leaders from 7 states.',
+    about_p2:"Our mission is to unite all players across the 3D printing and additive manufacturing value chain — from equipment suppliers, material providers, service bureaus, educators, to end-users.",
+    ap1_t:"Industry Networking", ap1_d:"Connect with 3D printing professionals, companies, and institutions nationwide",
+    ap2_t:"Education &amp; Training", ap2_d:"Webinars, workshops, and certification support for the industry",
+    ap3_t:"Government Liaison", ap3_d:"Represent the industry with MITI, MIGHT, MDEC and other agencies",
+    ap4_t:"Digital-First 2026", ap4_d:"All activities, meetings and registration are conducted online",
+    manifesto_tag:"Our Manifesto",
+    m1:"Promote AM industry awareness in Malaysia", m2:"Develop technical standards and best practices",
+    m3:"Bridge industry, academia, and government", m4:"Support talent development &amp; education",
+    m5:"Facilitate business matching among members", m6:"Represent Malaysia in international AM bodies",
+    m7:"Advocate for supportive government policies", m8:"Publish industry reports &amp; newsletters",
+    m9:"Host national AM conferences &amp; exhibitions", m10:"Support SME adoption of AM technology",
+    m11:"Encourage R&amp;D and innovation in AM", m12:"Maintain financial sustainability of the Association",
+    mem_tag:"Membership", mem_title:"Join the MAMA Community",
+    mem_sub:"Whether you're an individual practitioner, a company, or an academic institution — there's a membership for you.",
+    mt1:"Individual", mp1:"Registration + RM 50/year annual fee",
+    mi1_1:"Access to member directory", mi1_2:"Invitation to all MAMA events",
+    mi1_3:"eRoses newsletter subscription", mi1_4:"Networking &amp; collaboration opportunities", mi1_5:"Digital membership certificate",
+    mt2:"Corporate / Organisation", mp2:"Registration + RM 100/year annual fee",
+    mi2_1:"All Individual benefits", mi2_2:"Company profile in member directory",
+    mi2_3:"Priority event sponsorship opportunities", mi2_4:"Business matching facilitation",
+    mi2_5:"Logo on MAMA website", mi2_6:"Voting rights at AGM",
+    mt3:"Academic / Institution", mp3:"Registration + RM 50/year annual fee",
+    mi3_1:"University, college or polytechnic", mi3_2:"Research collaboration network",
+    mi3_3:"Co-host educational webinars", mi3_4:"Student chapter support", mi3_5:"Industry-academia linkage",
+    mem_reg_btn:"Register Now",
+    reg_tag:"Online Registration", reg_title:"Become a MAMA Member",
+    reg_sub:"Fill in the form below. Our Secretariat will contact you within 3 working days with payment instructions.",
+    toggle_ind:"👤 Individual / Academic", toggle_corp:"🏢 Corporate / Organisation",
+    fee_label:"Individual Membership Fee:", fee_ind_text:"RM 50 (one-time registration) + RM 50/year (annual subscription). Payment details will be sent to your email after submission.",
+    fee_corp_label:"Corporate Membership Fee:", fee_corp_text:"RM 50 (one-time registration) + RM 100/year (annual subscription). Payment details will be sent to your email after submission.",
+    f_name:"Full Name", f_name_ph:"As per IC / Passport",
+    f_org:"Organisation Name", f_org_ph:"Company / Institution name",
+    f_ic:"IC / Passport No.",
+    f_email:"Email Address", f_email_ph:"your@email.com",
+    f_phone:"Mobile Number",
+    f_state:"State", f_state_ph:"— Select State —",
+    f_industry:"Industry / Field", f_industry_ph:"— Select —",
+    ind1:"3D Printing Service Bureau", ind2:"Equipment / Machine Supplier",
+    ind3:"Material / Filament Supplier", ind4:"Product Design / Engineering",
+    ind5:"Education / Training", ind6:"Medical / Healthcare",
+    ind7:"Aerospace / Defence", ind8:"Automotive",
+    ind9:"Construction / Architecture", ind10:"Consumer Products",
+    ind11:"Research &amp; Development", ind12:"Government / NGO", ind13:"Other",
+    f_source:"How did you hear about MAMA?", f_source_ph:"— Optional —",
+    src_ref:"Referred by a member", src_event:"Industry event", src_other:"Other",
+    f_intro:"Brief Introduction (optional)", f_intro_ph:"Tell us about yourself or your organisation and your interest in Additive Manufacturing...",
+    f_agree:"I agree to the MAMA Constitution (Undang-Undang Persatuan) and confirm all information above is accurate.",
+    f_submit:"Submit Membership Application →",
+    f_note:"Your data is kept confidential and used only for MAMA membership purposes.",
+    f_success:"✅ Thank you! Your application has been received. Our Secretariat will contact you within 3 working days.",
+    ev_tag:"Events 2026", ev_title:"Upcoming Activities",
+    ev_sub:"All MAMA events in 2026 are held online — join from anywhere in Malaysia.",
+    ev1_date:"April 2026", ev1_title:"Emergency Committee Meeting — MAMA Revival 2026",
+    ev1_desc:"Official committee meeting to approve the 2026 Action Plan, confirm roles, and revive MAMA operations. Committee members only.",
+    ev_members_only:"Members Only →",
+    ev2_date:"May – June 2026", ev2_title:"Annual General Meeting (AGM) 2026 + Committee Election",
+    ev2_desc:"MAMA's 2026 AGM — review of accounts, 2026 plan presentation, and election of new committee. Open to all registered members.",
+    ev_reg_attend:"Register to Attend →",
+    ev3_date:"June 2026", ev3_title:"Webinar: State of 3D Printing in Malaysia 2026",
+    ev3_desc:"Industry overview covering market trends, technology updates, government initiatives, and opportunities for Malaysian AM businesses.",
+    ev4_date:"August 2026", ev4_title:"Online Workshop: AM Materials, Processes &amp; Applications",
+    ev4_desc:"Hands-on online workshop covering FDM, SLA, SLS, metal AM, and material selection for industrial applications.",
+    ev5_date:"Q3 2026", ev5_title:"eRoses Newsletter — Relaunch Issue",
+    ev5_desc:"MAMA's official industry newsletter returns with member spotlights, technology updates, and industry news. Published quarterly.",
+    ev5_mode:"📰 Digital Newsletter", ev5_link:"Subscribe via Membership →",
+    ev6_date:"October – November 2026", ev6_title:"MAMA Virtual Conference &amp; Expo 2026",
+    ev6_desc:"MAMA's flagship annual event — panel discussions, product showcases, B2B meetings, and the MAMA Member Awards. Open to public.",
+    ev6_mode:"🟢 Online (Multi-day)", ev6_link:"Pre-Register →",
+    online_zoom:"🟢 Online (Zoom)", online_free:"🟢 Online — FREE for Members",
+    online_inter:"🟢 Online (Interactive)", ev_join_member:"Join as Member →",
+    ev_reg_interest:"Register Interest →",
+    com_tag:"Leadership", com_title:"Committee 2023",
+    com_sub:"Elected at the AGM on 16 December 2022. Our volunteer committee members represent Malaysia's 3D printing industry across multiple states.",
+    pos_president:"President", pos_dep:"Deputy President",
+    pos_vp_ind:"Vice President (Industry)", pos_vp_edu:"Vice President (Education)",
+    pos_sec:"Secretary", pos_tres:"Treasurer", pos_asec:"Asst. Treasurer", pos_atres:"Asst. Secretary",
+    pos_exco_ind:"Exco (Industrial)", pos_exco_gov:"Exco (Government)",
+    pos_exco_edu:"Exco (Education)", pos_exco_media:"Exco (Media / Promotion)", pos_advisor:"Advisor",
+    agm_note:"✅ <strong>Elected at AGM 16 December 2022 (online)</strong> — New committee replacing the founding committee for the 2023 term.",
+    agm_note_bold:"Elected at AGM 16 December 2022 (online)",
+    con_tag:"Get In Touch", con_title:"Contact MAMA",
+    con_sub:"Reach out for membership enquiries, event collaboration, sponsorship, or any association matters.",
+    con_addr_l:"Registered Address", con_ros_l:"ROS Registration No.",
+    con_social_l:"Follow Us", con_form_label:"Send us a message",
+    con_f_name:"Your Name", con_f_email:"Your Email", con_f_subj:"Subject", con_f_msg:"Your message...", con_f_send:"Send Message",
+    footer_tagline:"Malaysia Additive Manufacturing Association<br>Persatuan Percetakan 3D Malaysia<br><br>Uniting Malaysia's 3D Printing &amp; Additive Manufacturing community since 2021.",
+    fc1_h:"Association", fc1_1:"About MAMA", fc1_2:"Our Committee", fc1_3:"Manifesto", fc1_4:"Constitution", fc1_5:"Annual Reports",
+    fc2_h:"Membership", fc2_1:"Individual", fc2_2:"Corporate", fc2_3:"Academic", fc2_4:"Register Now", fc2_5:"Renew Membership",
+    fc3_h:"Resources", fc3_1:"Events 2026", fc3_2:"eRoses Newsletter", fc3_3:"Industry News", fc3_4:"Member Directory", fc3_5:"Contact",
+    footer_copy:"© 2026 Malaysia Additive Manufacturing Association. All rights reserved.",
+    footer_ros:"Registered with ROS Malaysia",
+  },
+  zh: {
+    topbar_reg:"马来西亚增材制造协会",
+    topbar_join:"立即注册 →",
+    announce_text:"MAMA 回来了！我们将于 2026 年重新启动。",
+    announce_link:"立即注册会员 →",
+    logo_full:"马来西亚增材制造协会",
+    nav_about:"关于", nav_membership:"会员", nav_events:"活动",
+    nav_committee:"委员会", nav_contact:"联系", nav_join:"加入 MAMA",
+    hero_tag:"🏭 国家增材制造协会",
+    hero_h1:'马来西亚<span>3D 打印</span>与增材制造的家',
+    hero_p:"MAMA 汇聚制造商、教育工作者、政府机构及创新者，共同建设马来西亚增材制造生态系统——从玻璃市到沙巴。",
+    hero_btn1:"注册成为会员", hero_btn2:"了解更多",
+    stat1:"成立并注册 ROS", stat2:"代表州属",
+    stat3:"会员类别", stat4:"2026 年全面数字化",
+    reg_badge:"已在马来西亚社团注册局（ROS / JPP）注册",
+    about_tag:"关于我们",
+    about_title:"马来西亚增材制造的全国代表机构",
+    about_p1:'MAMA（马来西亚增材制造协会），又称 <em>Persatuan Percetakan 3D Malaysia</em>，于 2021 年 2 月由来自 7 个州属的 21 位行业领袖共同创立。',
+    about_p2:"我们的使命是团结 3D 打印和增材制造价值链中的所有参与者——从设备供应商、材料供应商、服务机构、教育工作者到终端用户。",
+    ap1_t:"行业网络", ap1_d:"与全国 3D 打印专业人士、企业及机构建立联系",
+    ap2_t:"教育与培训", ap2_d:"为行业提供网络研讨会、工作坊及认证支持",
+    ap3_t:"政府关系", ap3_d:"代表行业与 MITI、MIGHT、MDEC 等机构合作",
+    ap4_t:"2026 年全面数字化", ap4_d:"所有活动、会议及注册均在线上进行",
+    manifesto_tag:"我们的宣言",
+    m1:"在马来西亚推广增材制造行业意识", m2:"制定技术标准和最佳实践",
+    m3:"架起行业、学术界和政府之间的桥梁", m4:"支持人才发展与教育",
+    m5:"促进会员之间的商业配对", m6:"代表马来西亚参与国际 AM 机构",
+    m7:"倡导有利的政府政策", m8:"出版行业报告与通讯",
+    m9:"举办全国 AM 会议与展览", m10:"支持中小企业采用 AM 技术",
+    m11:"鼓励 AM 领域的研究与创新", m12:"保持协会财务的可持续性",
+    mem_tag:"会员", mem_title:"加入 MAMA 社区",
+    mem_sub:"无论您是个人从业者、企业还是学术机构——都有适合您的会员类别。",
+    mt1:"个人", mp1:"注册费 + RM 50/年 年费",
+    mi1_1:"访问会员目录", mi1_2:"受邀参加所有 MAMA 活动",
+    mi1_3:"订阅 eRoses 电子通讯", mi1_4:"网络交流与合作机会", mi1_5:"数字会员证书",
+    mt2:"企业 / 组织", mp2:"注册费 + RM 100/年 年费",
+    mi2_1:"包含所有个人会员权益", mi2_2:"公司简介列入会员目录",
+    mi2_3:"优先活动赞助机会", mi2_4:"商业配对便利",
+    mi2_5:"企业标志展示于 MAMA 网站", mi2_6:"AGM 投票权",
+    mt3:"学术 / 机构", mp3:"注册费 + RM 50/年 年费",
+    mi3_1:"大学、学院或理工学院", mi3_2:"研究合作网络",
+    mi3_3:"共同举办教育网络研讨会", mi3_4:"学生分会支持", mi3_5:"产学合作联结",
+    mem_reg_btn:"立即注册",
+    reg_tag:"在线注册", reg_title:"成为 MAMA 会员",
+    reg_sub:"请填写以下表格。我们的秘书处将在 3 个工作日内与您联系，提供付款说明。",
+    toggle_ind:"👤 个人 / 学术", toggle_corp:"🏢 企业 / 组织",
+    fee_label:"个人会员费：", fee_ind_text:"RM 50（一次性注册费）+ RM 50/年（年费）。提交后付款详情将发送到您的电子邮件。",
+    fee_corp_label:"企业会员费：", fee_corp_text:"RM 50（一次性注册费）+ RM 100/年（年费）。提交后付款详情将发送到您的电子邮件。",
+    f_name:"全名", f_name_ph:"与身份证 / 护照一致",
+    f_org:"组织名称", f_org_ph:"公司 / 机构名称",
+    f_ic:"身份证 / 护照号码",
+    f_email:"电子邮件", f_email_ph:"您的电子邮件",
+    f_phone:"手机号码",
+    f_state:"州属", f_state_ph:"— 请选择州属 —",
+    f_industry:"行业 / 领域", f_industry_ph:"— 请选择 —",
+    ind1:"3D 打印服务机构", ind2:"设备 / 机器供应商",
+    ind3:"材料 / 耗材供应商", ind4:"产品设计 / 工程",
+    ind5:"教育 / 培训", ind6:"医疗 / 健康",
+    ind7:"航空航天 / 国防", ind8:"汽车",
+    ind9:"建筑 / 建设", ind10:"消费品",
+    ind11:"研究与开发", ind12:"政府 / 非政府组织", ind13:"其他",
+    f_source:"您如何得知 MAMA？", f_source_ph:"— 可选 —",
+    src_ref:"会员推荐", src_event:"行业活动", src_other:"其他",
+    f_intro:"简短介绍（可选）", f_intro_ph:"请介绍您自己或您的组织及对增材制造的兴趣...",
+    f_agree:"我同意 MAMA 章程（Undang-Undang Persatuan）并确认以上所有信息准确无误。",
+    f_submit:"提交会员申请 →",
+    f_note:"您的数据将保密，仅用于 MAMA 会员事务。",
+    f_success:"✅ 谢谢！您的申请已收到。我们的秘书处将在 3 个工作日内与您联系。",
+    ev_tag:"2026 年活动", ev_title:"即将举办的活动",
+    ev_sub:"2026 年所有 MAMA 活动均在线上举行——在马来西亚任何地方均可参加。",
+    ev1_date:"2026 年 4 月", ev1_title:"紧急委员会会议 — MAMA 2026 复兴",
+    ev1_desc:"正式委员会会议，批准 2026 年行动计划，确认职责，恢复 MAMA 运营。仅限委员会成员。",
+    ev_members_only:"仅限会员 →",
+    ev2_date:"2026 年 5 月 – 6 月", ev2_title:"2026 年年度大会（AGM）+ 委员会选举",
+    ev2_desc:"MAMA 2026 年年度大会——财务审查、2026 年计划展示及新委员会选举。向所有注册会员开放。",
+    ev_reg_attend:"注册参加 →",
+    ev3_date:"2026 年 6 月", ev3_title:"网络研讨会：2026 年马来西亚 3D 打印现状",
+    ev3_desc:"行业概述，涵盖市场趋势、技术更新、政府举措及马来西亚增材制造企业的机遇。",
+    ev4_date:"2026 年 8 月", ev4_title:"在线工作坊：AM 材料、工艺与应用",
+    ev4_desc:"在线工作坊，涵盖 FDM、SLA、SLS、金属增材制造及工业应用材料选择。",
+    ev5_date:"2026 年第三季", ev5_title:"eRoses 电子通讯 — 重新发行",
+    ev5_desc:"MAMA 官方行业通讯回归，包含会员动态、技术更新及行业资讯，每季度发布一次。",
+    ev5_mode:"📰 数字通讯", ev5_link:"通过会员订阅 →",
+    ev6_date:"2026 年 10 月 – 11 月", ev6_title:"MAMA 虚拟年度大会暨博览会 2026",
+    ev6_desc:"MAMA 年度旗舰活动——专题讨论、产品展示、B2B 会议及 MAMA 会员奖项。向公众开放。",
+    ev6_mode:"🟢 在线（多天）", ev6_link:"预先注册 →",
+    online_zoom:"🟢 在线（Zoom）", online_free:"🟢 在线 — 会员免费",
+    online_inter:"🟢 在线（互动）", ev_join_member:"以会员身份参加 →",
+    ev_reg_interest:"登记意向 →",
+    com_tag:"领导层", com_title:"2023 年委员会",
+    com_sub:"于 2022 年 12 月 16 日年度大会上选出。我们的志愿委员会成员代表马来西亚 3D 打印行业跨多个州属的广泛性。",
+    pos_president:"主席", pos_dep:"副主席",
+    pos_vp_ind:"副主席（工业）", pos_vp_edu:"副主席（教育）",
+    pos_sec:"秘书", pos_tres:"财政", pos_asec:"副财政", pos_atres:"副秘书",
+    pos_exco_ind:"执委（工业）", pos_exco_gov:"执委（政府）",
+    pos_exco_edu:"执委（教育）", pos_exco_media:"执委（媒体 / 推广）", pos_advisor:"顾问",
+    agm_note:"✅ <strong>于 2022 年 12 月 16 日年度大会（线上）选出</strong> — 新委员会接替创始委员会，任期 2023 年。",
+    agm_note_bold:"于 2022 年 12 月 16 日年度大会（线上）选出",
+    con_tag:"联系我们", con_title:"联系 MAMA",
+    con_sub:"如有会员咨询、活动合作、赞助或任何协会事务，请联系我们。",
+    con_addr_l:"注册地址", con_ros_l:"ROS 注册号",
+    con_social_l:"关注我们", con_form_label:"发送消息",
+    con_f_name:"您的姓名", con_f_email:"您的电子邮件", con_f_subj:"主题", con_f_msg:"您的消息...", con_f_send:"发送消息",
+    footer_tagline:"马来西亚增材制造协会<br>Persatuan Percetakan 3D Malaysia<br><br>自 2021 年起团结马来西亚 3D 打印与增材制造社区。",
+    fc1_h:"协会", fc1_1:"关于 MAMA", fc1_2:"委员会", fc1_3:"宣言", fc1_4:"章程", fc1_5:"年度报告",
+    fc2_h:"会员", fc2_1:"个人", fc2_2:"企业", fc2_3:"学术", fc2_4:"立即注册", fc2_5:"续费会员",
+    fc3_h:"资源", fc3_1:"2026 年活动", fc3_2:"eRoses 通讯", fc3_3:"行业资讯", fc3_4:"会员目录", fc3_5:"联系",
+    footer_copy:"© 2026 马来西亚增材制造协会。保留所有权利。",
+    footer_ros:"已在马来西亚 ROS 注册",
+  }
+};
+
+let currentLang = 'ms';
+let memberType = 'individual';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    if (b.textContent.trim() === (lang==='ms'?'BM':lang==='en'?'EN':'中文')) b.classList.add('active');
+  });
+  document.documentElement.lang = lang === 'ms' ? 'ms' : lang === 'en' ? 'en' : 'zh';
+  applyTranslations();
+}
+
+function applyTranslations() {
+  const t = T[currentLang];
+  // Text nodes
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+  // Placeholders
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    if (t[key] !== undefined) el.placeholder = t[key].replace(/&amp;/g,'&');
+  });
+  // Update fee note based on current member type
+  updateFeeNote();
+}
+
+function updateFeeNote() {
+  const t = T[currentLang];
+  const note = document.getElementById('feeNote');
+  if (memberType === 'corporate') {
+    note.innerHTML = '<strong>' + t.fee_corp_label + '</strong> ' + t.fee_corp_text;
+  } else {
+    note.innerHTML = '<strong>' + t.fee_label + '</strong> ' + t.fee_ind_text;
+  }
+}
+
+function setType(type, el) {
+  memberType = type;
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  if (type === 'corporate') {
+    document.getElementById('orgGroup').style.display = '';
+    document.getElementById('icGroup').style.display = 'none';
+  } else {
+    document.getElementById('orgGroup').style.display = 'none';
+    document.getElementById('icGroup').style.display = '';
+  }
+  updateFeeNote();
+}
+
+const SB_URL = 'https://eerdjpvhehndamekevvi.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcmRqcHZoZWhuZGFtZWtldnZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MzM2NTYsImV4cCI6MjA3NTAwOTY1Nn0.XWtLmePeGLyazhUae_uYTlF8nx7FpGi8pWrH7zbRy1A';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+let currentSubmissionId = null;
+let currentAmount = 50;
+
+async function submitForm(e) {
+  e.preventDefault();
+  
+  const submitBtn = document.querySelector('.submit-btn');
+  const orgText = submitBtn.innerHTML;
+  submitBtn.innerHTML = '⏳ Processing...';
+  submitBtn.disabled = true;
+
+  // Calculate amount based on member type (Registration + First Year)
+  currentAmount = memberType === 'corporate' ? 150 : 100;
+
+  const data = {
+    member_type: memberType,
+    full_name: document.getElementById('fullname').value || null,
+    org_name: document.getElementById('orgname').value || null,
+    ic_passport: document.getElementById('icnum').value || null,
+    email: document.getElementById('email').value || null,
+    phone: document.getElementById('phone').value || null,
+    state: document.getElementById('state').value || null,
+    industry: document.getElementById('industry').value || null,
+    source: document.getElementById('source').value || null,
+    intro: document.getElementById('intro').value || null,
+    payment_status: 'pending',
+    application_status: 'new',
+    payment_amount: currentAmount,
+    lang: currentLang
+  };
+
+  const { data: inserted, error } = await sb.from('mama_members').insert([data]).select();
+  
+  submitBtn.innerHTML = orgText;
+  submitBtn.disabled = false;
+
+  if (error) {
+    alert('Ralat sistem: ' + error.message);
+    return;
+  }
+  
+  currentSubmissionId = inserted[0].id;
+  
+  // Show Mock Stripe Modal
+  document.getElementById('stripeAmount').textContent = 'RM ' + currentAmount.toFixed(2);
+  document.getElementById('stripeModal').style.display = 'flex';
+}
+
+function closeStripeModal() {
+  document.getElementById('stripeModal').style.display = 'none';
+}
+
+async function processMockPayment() {
+  document.getElementById('stripePayBtn').style.display = 'none';
+  document.getElementById('stripeSpinner').style.display = 'block';
+  
+  // Simulate 2 sec network call
+  setTimeout(async () => {
+    // Update Supabase to Paid
+    await sb.from('mama_members').update({ 
+      payment_status: 'paid', 
+      application_status: 'paid',
+      stripe_session_id: 'dummy_sess_' + Date.now()
+    }).eq('id', currentSubmissionId);
+
+    // Redirect to success
+    window.location.href = '/success?ref=' + currentSubmissionId.split('-')[0] + '&amt=' + currentAmount + '&lang=' + currentLang;
+  }, 2000);
+}
+
+function submitContact(e) {
+  e.preventDefault();
+  const t = T[currentLang];
+  e.target.innerHTML = '<div style="color:#90c5f5;font-weight:600;text-align:center;padding:16px;">✅ ' +
+    (currentLang==='ms'?'Terima kasih! Kami akan menghubungi anda dalam masa 3 hari bekerja.':
+     currentLang==='en'?"Thank you! We'll get back to you within 3 working days.":
+     '谢谢！我们将在 3 个工作日内回复您。') + '</div>';
+}
+
+// Active nav on scroll
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.id; });
+  navLinks.forEach(a => {
+    a.classList.remove('active');
+    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+  });
+});
+
+// Init
+applyTranslations();
+</script>
+</body>
+</html>

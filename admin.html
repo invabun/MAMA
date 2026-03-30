@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MAMA Admin Dashboard</title>
+  <meta name="robots" content="noindex,nofollow"/>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f8;color:#2d2d2d;min-height:100vh}
+    /* LOGIN */
+    #loginScreen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#1A4F8B,#0d2e57)}
+    .login-card{background:#fff;border-radius:20px;padding:44px 40px;width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+    .login-logo{width:60px;height:60px;border-radius:50%;object-fit:cover;margin:0 auto 16px;display:block}
+    .login-card h2{font-size:1.3rem;font-weight:800;color:#1A4F8B;margin-bottom:4px}
+    .login-card p{font-size:0.83rem;color:#888;margin-bottom:28px}
+    .login-card input{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:12px 14px;font-size:0.9rem;outline:none;transition:.2s;margin-bottom:14px}
+    .login-card input:focus{border-color:#2E75B6;box-shadow:0 0 0 3px rgba(46,117,182,0.12)}
+    .login-card button{width:100%;background:#1A4F8B;color:#fff;border:none;border-radius:10px;padding:13px;font-size:0.95rem;font-weight:700;cursor:pointer;transition:.2s}
+    .login-card button:hover{background:#0d2e57}
+    .login-err{font-size:0.82rem;color:#e53e3e;margin-top:10px;display:none}
+    /* DASHBOARD */
+    #dashboard{display:none}
+    .topnav{background:#1A4F8B;color:#fff;padding:14px 28px;display:flex;align-items:center;justify-content:space-between}
+    .topnav .brand{display:flex;align-items:center;gap:12px}
+    .topnav img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+    .topnav .brand-txt{font-size:1rem;font-weight:800}
+    .topnav .brand-sub{font-size:0.72rem;opacity:.7}
+    .nav-right{display:flex;align-items:center;gap:16px;font-size:0.83rem}
+    .btn-logout{background:rgba(255,255,255,0.15);border:none;color:#fff;padding:6px 14px;border-radius:8px;cursor:pointer;font-size:0.8rem;transition:.2s}
+    .btn-logout:hover{background:rgba(255,255,255,0.25)}
+    .main{max-width:1300px;margin:0 auto;padding:28px 24px}
+    /* STATS */
+    .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+    .stat-card{background:#fff;border-radius:16px;padding:22px 20px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+    .stat-card .label{font-size:0.75rem;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+    .stat-card .val{font-size:2rem;font-weight:800;color:#1A4F8B}
+    .stat-card .delta{font-size:0.75rem;color:#22c55e;margin-top:4px}
+    .stat-card.orange .val{color:#FF6B35}
+    .stat-card.green .val{color:#22c55e}
+    .stat-card.red .val{color:#ef4444}
+    /* FILTERS */
+    .filter-bar{background:#fff;border-radius:14px;padding:16px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:20px;box-shadow:0 2px 12px rgba(0,0,0,0.06)}
+    .filter-bar input{flex:1;min-width:180px;border:1.5px solid #ddd;border-radius:8px;padding:9px 12px;font-size:0.88rem;outline:none;transition:.2s}
+    .filter-bar input:focus{border-color:#2E75B6}
+    .filter-bar select{border:1.5px solid #ddd;border-radius:8px;padding:9px 12px;font-size:0.88rem;outline:none;color:#333;cursor:pointer}
+    .btn-refresh{background:#1A4F8B;color:#fff;border:none;padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:.2s}
+    .btn-refresh:hover{background:#0d2e57}
+    .btn-csv{background:#f0f4f8;border:1.5px solid #ddd;padding:9px 18px;border-radius:8px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:.2s;color:#333}
+    .btn-csv:hover{background:#e2e8f0}
+    /* TABLE */
+    .table-wrap{background:#fff;border-radius:16px;box-shadow:0 2px 12px rgba(0,0,0,0.06);overflow:hidden}
+    .table-head{padding:16px 20px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between}
+    .table-head h3{font-size:0.95rem;font-weight:700;color:#1A4F8B}
+    .table-head .count{font-size:0.8rem;color:#888}
+    table{width:100%;border-collapse:collapse;font-size:0.84rem}
+    thead th{background:#f8fafc;padding:11px 14px;text-align:left;font-size:0.75rem;text-transform:uppercase;letter-spacing:.4px;color:#888;font-weight:600;white-space:nowrap}
+    tbody tr{border-top:1px solid #f0f4f8;transition:background .15s}
+    tbody tr:hover{background:#f8fafc}
+    td{padding:11px 14px;vertical-align:middle}
+    .badge{display:inline-block;padding:3px 10px;border-radius:50px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+    .badge.new{background:#dbeafe;color:#1d4ed8}
+    .badge.paid{background:#d1fae5;color:#065f46}
+    .badge.approved{background:#bbf7d0;color:#14532d}
+    .badge.rejected{background:#fee2e2;color:#991b1b}
+    .badge.pending{background:#fef3c7;color:#92400e}
+    .badge.ind{background:#ede9fe;color:#5b21b6}
+    .badge.corp{background:#dbeafe;color:#1e40af}
+    .badge.acad{background:#fce7f3;color:#9d174d}
+    .action-btns{display:flex;gap:6px}
+    .btn-approve{background:#d1fae5;color:#065f46;border:none;padding:5px 12px;border-radius:7px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:.2s}
+    .btn-approve:hover{background:#22c55e;color:#fff}
+    .btn-reject{background:#fee2e2;color:#991b1b;border:none;padding:5px 12px;border-radius:7px;font-size:0.75rem;font-weight:700;cursor:pointer;transition:.2s}
+    .btn-reject:hover{background:#ef4444;color:#fff}
+    .btn-view{background:#f0f4f8;color:#555;border:none;padding:5px 12px;border-radius:7px;font-size:0.75rem;font-weight:600;cursor:pointer;transition:.2s}
+    .btn-view:hover{background:#e2e8f0}
+    .empty{text-align:center;padding:60px 20px;color:#aaa;font-size:0.9rem}
+    /* MODAL */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:1000;align-items:center;justify-content:center;padding:20px}
+    .modal-overlay.open{display:flex}
+    .modal{background:#fff;border-radius:20px;width:600px;max-width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)}
+    .modal-hd{background:#1A4F8B;color:#fff;padding:20px 24px;border-radius:20px 20px 0 0;display:flex;align-items:center;justify-content:space-between}
+    .modal-hd h3{font-size:1rem;font-weight:700}
+    .modal-close{background:none;border:none;color:#fff;font-size:1.4rem;cursor:pointer;line-height:1}
+    .modal-body{padding:24px}
+    .detail-row{display:grid;grid-template-columns:140px 1fr;gap:8px;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:0.87rem}
+    .detail-row:last-child{border:none}
+    .detail-label{color:#888;font-weight:600}
+    .detail-val{color:#222;font-weight:500}
+    .notes-area{width:100%;border:1.5px solid #ddd;border-radius:10px;padding:10px 12px;font-size:0.85rem;font-family:inherit;resize:vertical;min-height:80px;margin-top:12px}
+    .notes-area:focus{outline:none;border-color:#2E75B6}
+    .modal-actions{display:flex;gap:10px;margin-top:18px}
+    .btn-save-notes{background:#1A4F8B;color:#fff;border:none;padding:10px 20px;border-radius:8px;font-size:0.85rem;font-weight:700;cursor:pointer;transition:.2s;flex:1}
+    .btn-save-notes:hover{background:#0d2e57}
+    .mem-num-box{background:#d1fae5;border:1.5px solid #22c55e;border-radius:10px;padding:12px 16px;margin-top:12px;font-size:0.87rem;color:#065f46;display:none}
+    .mem-num-box strong{font-family:monospace;font-size:1rem}
+    /* TOAST */
+    .toast{position:fixed;bottom:28px;right:28px;background:#333;color:#fff;padding:12px 20px;border-radius:12px;font-size:0.87rem;font-weight:600;z-index:9999;transform:translateY(80px);opacity:0;transition:.3s}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.success{background:#16a34a}
+    .toast.error{background:#dc2626}
+    .loading{text-align:center;padding:40px;color:#aaa;font-size:1.4rem;animation:spin 1s linear infinite;display:inline-block}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:900px){.stats{grid-template-columns:1fr 1fr}.filter-bar{flex-direction:column}}
+    @media(max-width:600px){.stats{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-card">
+    <img src="mama_logo.png" class="login-logo" onerror="this.src='mama_logo.jpg'" alt="MAMA"/>
+    <h2>MAMA Admin</h2>
+    <p>Masuk untuk menguruskan permohonan keahlian</p>
+    <input type="password" id="pwInput" placeholder="Kata laluan..." onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button onclick="doLogin()">Log Masuk</button>
+    <div class="login-err" id="loginErr">⚠ Kata laluan salah. Cuba lagi.</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <nav class="topnav">
+    <div class="brand">
+      <img src="mama_logo.png" onerror="this.src='mama_logo.jpg'" alt="MAMA"/>
+      <div>
+        <div class="brand-txt">MAMA Admin</div>
+        <div class="brand-sub">Malaysia Additive Manufacturing Association</div>
+      </div>
+    </div>
+    <div class="nav-right">
+      <span id="adminTime" style="opacity:.7"></span>
+      <button class="btn-logout" onclick="doLogout()">Log Keluar</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <!-- STATS -->
+    <div class="stats">
+      <div class="stat-card"><div class="label">Jumlah Permohonan</div><div class="val" id="sTotal">—</div><div class="delta">Semua masa</div></div>
+      <div class="stat-card orange"><div class="label">Menunggu Semakan</div><div class="val" id="sPending">—</div><div class="delta">Perlu tindakan</div></div>
+      <div class="stat-card green"><div class="label">Diluluskan</div><div class="val" id="sApproved">—</div><div class="delta">Ahli aktif</div></div>
+      <div class="stat-card"><div class="label">Jumlah Kutipan</div><div class="val" id="sRevenue">—</div><div class="delta">Pembayaran diterima</div></div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-bar">
+      <input type="text" id="searchInput" placeholder="🔍  Cari nama, emel, atau nombor ahli..." oninput="filterTable()"/>
+      <select id="filterStatus" onchange="filterTable()">
+        <option value="">Semua Status</option>
+        <option value="paid">Paid – Menunggu</option>
+        <option value="approved">Diluluskan</option>
+        <option value="rejected">Ditolak</option>
+        <option value="new">Baru (Belum Bayar)</option>
+      </select>
+      <select id="filterType" onchange="filterTable()">
+        <option value="">Semua Jenis</option>
+        <option value="individual">Individu</option>
+        <option value="corporate">Korporat</option>
+        <option value="academic">Akademik</option>
+      </select>
+      <select id="filterState" onchange="filterTable()">
+        <option value="">Semua Negeri</option>
+        <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+        <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+        <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+        <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+        <option>Terengganu</option><option>W.P. Kuala Lumpur</option>
+      </select>
+      <button class="btn-refresh" onclick="loadMembers()">↻ Muat Semula</button>
+      <button class="btn-csv" onclick="exportCSV()">⬇ Export CSV</button>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap">
+      <div class="table-head">
+        <h3>Senarai Permohonan Keahlian</h3>
+        <span class="count" id="tableCount"></span>
+      </div>
+      <div id="tableBody">
+        <div class="empty">⏳ Memuatkan data...</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MEMBER DETAIL MODAL -->
+<div class="modal-overlay" id="memberModal">
+  <div class="modal">
+    <div class="modal-hd">
+      <h3 id="modalTitle">Butiran Ahli</h3>
+      <button class="modal-close" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body" id="modalContent"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_PW = 'MAMA2026!';
+const SB_URL = 'https://eerdjpvhehndamekevvi.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcmRqcHZoZWhuZGFtZWtldnZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MzM2NTYsImV4cCI6MjA3NTAwOTY1Nn0.XWtLmePeGLyazhUae_uYTlF8nx7FpGi8pWrH7zbRy1A';
+const { createClient } = supabase;
+const sb = createClient(SB_URL, SB_KEY);
+
+let allMembers = [];
+let currentMemberId = null;
+
+// ── Auth ──
+function doLogin() {
+  const pw = document.getElementById('pwInput').value;
+  if (pw === ADMIN_PW) {
+    sessionStorage.setItem('mama_admin', Date.now());
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadMembers();
+    updateClock();
+    setInterval(updateClock, 60000);
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('pwInput').value = '';
+  }
+}
+function doLogout() {
+  sessionStorage.removeItem('mama_admin');
+  location.reload();
+}
+function updateClock() {
+  document.getElementById('adminTime').textContent = new Date().toLocaleString('ms-MY', {dateStyle:'medium',timeStyle:'short'});
+}
+// Check existing session
+window.addEventListener('DOMContentLoaded', () => {
+  const sess = sessionStorage.getItem('mama_admin');
+  if (sess && Date.now() - Number(sess) < 8 * 3600 * 1000) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    loadMembers();
+    updateClock();
+    setInterval(updateClock, 60000);
+  }
+});
+
+// ── Data ──
+async function loadMembers() {
+  document.getElementById('tableBody').innerHTML = '<div class="empty"><span class="loading">⏳</span> Memuatkan...</div>';
+  const { data, error } = await sb.from('mama_members').select('*').order('created_at', { ascending: false });
+  if (error) { showToast('Ralat: ' + error.message, 'error'); return; }
+  allMembers = data || [];
+  updateStats();
+  filterTable();
+}
+
+function updateStats() {
+  const paid = allMembers.filter(m => ['paid','approved'].includes(m.payment_status));
+  const approved = allMembers.filter(m => m.application_status === 'approved');
+  const pending = allMembers.filter(m => m.application_status === 'paid');
+  const revenue = allMembers.filter(m => m.payment_status === 'paid').reduce((s,m) => s + (m.payment_amount||0), 0);
+  document.getElementById('sTotal').textContent = allMembers.length;
+  document.getElementById('sPending').textContent = pending.length;
+  document.getElementById('sApproved').textContent = approved.length;
+  document.getElementById('sRevenue').textContent = 'RM ' + revenue.toFixed(0);
+}
+
+function filterTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const st = document.getElementById('filterStatus').value;
+  const ty = document.getElementById('filterType').value;
+  const sta = document.getElementById('filterState').value;
+  let rows = allMembers.filter(m => {
+    const matchQ = !q || (m.full_name||'').toLowerCase().includes(q) || (m.email||'').toLowerCase().includes(q) || (m.membership_number||'').toLowerCase().includes(q);
+    const matchSt = !st || m.application_status === st;
+    const matchTy = !ty || m.member_type === ty;
+    const matchSta = !sta || m.state === sta;
+    return matchQ && matchSt && matchTy && matchSta;
+  });
+  document.getElementById('tableCount').textContent = rows.length + ' rekod';
+  renderTable(rows);
+}
+
+function renderTable(rows) {
+  if (!rows.length) {
+    document.getElementById('tableBody').innerHTML = '<div class="empty">🔍 Tiada rekod dijumpai.</div>';
+    return;
+  }
+  const typeLabel = { individual:'Individu', corporate:'Korporat', academic:'Akademik' };
+  const typeBadge = { individual:'ind', corporate:'corp', academic:'acad' };
+  let html = `<table><thead><tr>
+    <th>#</th><th>Nama</th><th>Jenis</th><th>Emel</th><th>Negeri</th>
+    <th>Jumlah</th><th>Bayar</th><th>Status</th><th>Tarikh</th><th>Tindakan</th>
+  </tr></thead><tbody>`;
+  rows.forEach((m, i) => {
+    const d = new Date(m.created_at).toLocaleDateString('ms-MY',{day:'2-digit',month:'short',year:'numeric'});
+    const payBadge = m.payment_status==='paid' ? '<span class="badge paid">Bayar</span>' : '<span class="badge pending">Belum</span>';
+    html += `<tr>
+      <td style="color:#aaa;font-size:.8rem">${i+1}</td>
+      <td><strong>${esc(m.full_name)}</strong>${m.membership_number?'<br><span style="font-size:.7rem;color:#2E75B6;font-family:monospace">'+esc(m.membership_number)+'</span>':''}</td>
+      <td><span class="badge ${typeBadge[m.member_type]||''}">${typeLabel[m.member_type]||m.member_type}</span></td>
+      <td>${esc(m.email)}</td>
+      <td style="font-size:.82rem">${esc(m.state)}</td>
+      <td style="font-weight:700;color:#1A4F8B">RM ${m.payment_amount||'—'}</td>
+      <td>${payBadge}</td>
+      <td><span class="badge ${m.application_status}">${statusLabel(m.application_status)}</span></td>
+      <td style="font-size:.78rem;color:#888;white-space:nowrap">${d}</td>
+      <td><div class="action-btns">
+        <button class="btn-view" onclick="viewMember('${m.id}')">👁 Lihat</button>
+        ${m.application_status==='paid'?`<button class="btn-approve" onclick="approveMember('${m.id}')">✓ Lulus</button><button class="btn-reject" onclick="rejectMember('${m.id}')">✕ Tolak</button>`:''}
+      </div></td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  document.getElementById('tableBody').innerHTML = html;
+}
+
+function statusLabel(s) {
+  return {new:'Baru',paid:'Menunggu',approved:'Diluluskan',rejected:'Ditolak'}[s]||s;
+}
+function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Actions ──
+async function approveMember(id) {
+  const { count } = await sb.from('mama_members').select('*',{count:'exact',head:true}).eq('application_status','approved');
+  const num = 'MAMA-2026-' + String((count||0)+1).padStart(4,'0');
+  const { error } = await sb.from('mama_members').update({ application_status:'approved', membership_number:num }).eq('id',id);
+  if (error) { showToast('Ralat: '+error.message,'error'); return; }
+  showToast('✓ Ahli diluluskan — ' + num, 'success');
+  await loadMembers();
+  if (currentMemberId === id) closeModal();
+}
+
+async function rejectMember(id) {
+  if (!confirm('Tolak permohonan ini?')) return;
+  const { error } = await sb.from('mama_members').update({ application_status:'rejected' }).eq('id',id);
+  if (error) { showToast('Ralat: '+error.message,'error'); return; }
+  showToast('Permohonan ditolak.', 'error');
+  await loadMembers();
+  if (currentMemberId === id) closeModal();
+}
+
+async function saveNotes(id) {
+  const notes = document.getElementById('notesField').value;
+  const { error } = await sb.from('mama_members').update({ admin_notes:notes }).eq('id',id);
+  if (error) { showToast('Ralat: '+error.message,'error'); return; }
+  showToast('Nota disimpan.','success');
+  await loadMembers();
+}
+
+// ── View Modal ──
+function viewMember(id) {
+  currentMemberId = id;
+  const m = allMembers.find(x => x.id === id);
+  if (!m) return;
+  const typeLabel = { individual:'Individu', corporate:'Korporat', academic:'Akademik' };
+  document.getElementById('modalTitle').textContent = m.full_name + ' — Butiran';
+  const d = (k,v) => `<div class="detail-row"><div class="detail-label">${k}</div><div class="detail-val">${v||'—'}</div></div>`;
+  let html = `
+    ${d('ID Sistem','<span style="font-family:monospace;font-size:.8rem">'+m.id+'</span>')}
+    ${d('Tarikh Daftar', new Date(m.created_at).toLocaleString('ms-MY'))}
+    ${d('Jenis Ahli', typeLabel[m.member_type]||m.member_type)}
+    ${d('Nama Penuh', m.full_name)}
+    ${d('Organisasi', m.org_name)}
+    ${d('No. IC / Pasport', m.ic_passport)}
+    ${d('Emel', '<a href="mailto:'+m.email+'" style="color:#2E75B6">'+m.email+'</a>')}
+    ${d('Telefon', m.phone)}
+    ${d('Negeri', m.state)}
+    ${d('Industri', m.industry)}
+    ${d('Sumber', m.source)}
+    ${d('Status Bayaran', m.payment_status)} 
+    ${d('Jumlah (RM)', m.payment_amount)}
+    ${d('Status Permohonan', statusLabel(m.application_status))}
+    ${m.membership_number?d('No. Keahlian','<strong style="color:#065f46;font-family:monospace">'+m.membership_number+'</strong>'):''}
+    ${m.intro?d('Pengenalan','<em>'+esc(m.intro)+'</em>'):''}
+    <div style="margin-top:16px">
+      <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">Nota Admin</div>
+      <textarea class="notes-area" id="notesField" placeholder="Tambah nota pentadbiran...">${esc(m.admin_notes)}</textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save-notes" onclick="saveNotes('${m.id}')">💾 Simpan Nota</button>
+      ${m.application_status==='paid'?`<button class="btn-approve" style="padding:10px 20px;border-radius:8px;font-size:.85rem" onclick="approveMember('${m.id}')">✓ Lulus</button><button class="btn-reject" style="padding:10px 20px;border-radius:8px;font-size:.85rem" onclick="rejectMember('${m.id}')">✕ Tolak</button>`:''}
+    </div>
+  `;
+  document.getElementById('modalContent').innerHTML = html;
+  document.getElementById('memberModal').classList.add('open');
+}
+function closeModal() {
+  document.getElementById('memberModal').classList.remove('open');
+  currentMemberId = null;
+}
+document.getElementById('memberModal').addEventListener('click', e => { if(e.target===e.currentTarget)closeModal(); });
+
+// ── CSV Export ──
+function exportCSV() {
+  const headers = ['ID','Tarikh','Jenis','Nama','Organisasi','IC/Pasport','Emel','Telefon','Negeri','Industri','Sumber','Status Bayar','Jumlah','Status Permohonan','No. Keahlian','Nota Admin'];
+  const rows = allMembers.map(m => [
+    m.id, new Date(m.created_at).toLocaleString(), m.member_type, m.full_name, m.org_name||'',
+    m.ic_passport||'', m.email, m.phone, m.state, m.industry, m.source||'',
+    m.payment_status, m.payment_amount||'', m.application_status, m.membership_number||'', m.admin_notes||''
+  ].map(v => '"'+String(v).replace(/"/g,'""')+'"').join(','));
+  const csv = [headers.join(','), ...rows].join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,\uFEFF' + encodeURIComponent(csv);
+  a.download = 'MAMA_Members_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+}
+
+// ── Toast ──
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + type;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+</script>
+</body>
+</html>
