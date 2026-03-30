@@ -33,10 +33,10 @@ ALTER TABLE public.mama_members ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "mama_allow_insert" ON public.mama_members
   FOR INSERT TO anon WITH CHECK (true);
 
--- Allow SELECT (admin reads via anon key — secured by password gate in admin.html)
-CREATE POLICY "mama_allow_select" ON public.mama_members
-  FOR SELECT TO anon USING (true);
+-- Allow SELECT (Only Authenticated Users)
+CREATE POLICY "mama_auth_select" ON public.mama_members
+  FOR SELECT TO authenticated USING (true);
 
--- Allow UPDATE (admin approval/rejection)
-CREATE POLICY "mama_allow_update" ON public.mama_members
-  FOR UPDATE TO anon USING (true);
+-- Allow UPDATE (Only Authenticated Users)
+CREATE POLICY "mama_auth_update" ON public.mama_members
+  FOR UPDATE TO authenticated USING (true);

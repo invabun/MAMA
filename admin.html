@@ -113,10 +113,11 @@
   <div class="login-card">
     <img src="mama_logo.png" class="login-logo" onerror="this.src='mama_logo.jpg'" alt="MAMA"/>
     <h2>MAMA Admin</h2>
-    <p>Masuk untuk menguruskan permohonan keahlian</p>
-    <input type="password" id="pwInput" placeholder="Kata laluan..." onkeydown="if(event.key==='Enter')doLogin()"/>
-    <button onclick="doLogin()">Log Masuk</button>
-    <div class="login-err" id="loginErr">⚠ Kata laluan salah. Cuba lagi.</div>
+    <p>Sign in to manage membership applications</p>
+    <input type="email" id="emailInput" placeholder="Admin Email..." onkeydown="if(event.key==='Enter')doLogin()"/>
+    <input type="password" id="pwInput" placeholder="Password..." onkeydown="if(event.key==='Enter')doLogin()"/>
+    <button onclick="doLogin()">Secure Login</button>
+    <div class="login-err" id="loginErr">⚠ Invalid credentials or access denied.</div>
   </div>
 </div>
 
@@ -201,7 +202,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-const ADMIN_PW = 'MAMA2026!';
 const SB_URL = 'https://eerdjpvhehndamekevvi.supabase.co';
 const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVlcmRqcHZoZWhuZGFtZWtldnZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk0MzM2NTYsImV4cCI6MjA3NTAwOTY1Nn0.XWtLmePeGLyazhUae_uYTlF8nx7FpGi8pWrH7zbRy1A';
 const { createClient } = supabase;
@@ -211,31 +211,37 @@ let allMembers = [];
 let currentMemberId = null;
 
 // ── Auth ──
-function doLogin() {
+async function doLogin() {
+  const email = document.getElementById('emailInput').value;
   const pw = document.getElementById('pwInput').value;
-  if (pw === ADMIN_PW) {
-    sessionStorage.setItem('mama_admin', Date.now());
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('dashboard').style.display = 'block';
-    loadMembers();
-    updateClock();
-    setInterval(updateClock, 60000);
-  } else {
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+
+  if (error) {
     document.getElementById('loginErr').style.display = 'block';
-    document.getElementById('pwInput').value = '';
+    document.getElementById('loginErr').textContent = '⚠ ' + error.message;
+    return;
   }
+
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+  loadMembers();
+  updateClock();
+  setInterval(updateClock, 60000);
 }
-function doLogout() {
-  sessionStorage.removeItem('mama_admin');
+
+async function doLogout() {
+  await sb.auth.signOut();
   location.reload();
 }
+
 function updateClock() {
   document.getElementById('adminTime').textContent = new Date().toLocaleString('ms-MY', {dateStyle:'medium',timeStyle:'short'});
 }
+
 // Check existing session
-window.addEventListener('DOMContentLoaded', () => {
-  const sess = sessionStorage.getItem('mama_admin');
-  if (sess && Date.now() - Number(sess) < 8 * 3600 * 1000) {
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashboard').style.display = 'block';
     loadMembers();
