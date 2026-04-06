@@ -1343,21 +1343,24 @@ async function submitForm(e) {
   // Calculate amount based on member type (Registration + First Year)
   currentAmount = memberType === 'corporate' ? 150 : 100;
 
-  // Use RPC function (SECURITY DEFINER) to bypass RLS
-  const { data: result, error } = await sb.rpc('register_mama_member', {
-    p_member_type: memberType,
-    p_full_name: document.getElementById('fullname').value || null,
-    p_org_name: document.getElementById('orgname').value || null,
-    p_ic_passport: document.getElementById('icnum')?.value || null,
-    p_email: document.getElementById('email').value || null,
-    p_phone: document.getElementById('phone').value || null,
-    p_state: document.getElementById('state').value || null,
-    p_industry: document.getElementById('industry').value || null,
-    p_source: document.getElementById('source').value || null,
-    p_intro: document.getElementById('intro').value || null,
-    p_payment_amount: currentAmount,
-    p_lang: currentLang
-  });
+  const data = {
+    member_type: memberType,
+    full_name: document.getElementById('fullname').value || null,
+    org_name: document.getElementById('orgname').value || null,
+    ic_passport: document.getElementById('icnum').value || null,
+    email: document.getElementById('email').value || null,
+    phone: document.getElementById('phone').value || null,
+    state: document.getElementById('state').value || null,
+    industry: document.getElementById('industry').value || null,
+    source: document.getElementById('source').value || null,
+    intro: document.getElementById('intro').value || null,
+    payment_status: 'pending',
+    application_status: 'new',
+    payment_amount: currentAmount,
+    lang: currentLang
+  };
+
+  const { data: inserted, error } = await sb.from('mama_members').insert([data]).select();
   
   submitBtn.innerHTML = orgText;
   submitBtn.disabled = false;
@@ -1367,7 +1370,7 @@ async function submitForm(e) {
     return;
   }
   
-  currentSubmissionId = result.id;
+  currentSubmissionId = inserted[0].id;
   
   // Show Mock Stripe Modal
   document.getElementById('stripeAmount').textContent = 'RM ' + currentAmount.toFixed(2);
