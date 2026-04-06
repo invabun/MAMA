@@ -911,24 +911,7 @@
   </div>
 </footer>
 
-<!-- DUMMY STRIPE MODAL -->
-<div class="stripe-overlay" id="stripeModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center;">
-  <div style="background:#fff;width:400px;border-radius:16px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,0.3);animation:popIn .3s ease-out">
-    <div style="background:#5469d4;padding:24px;text-align:center;color:#fff">
-      <div style="font-size:1.1rem;font-weight:700;margin-bottom:4px">MAMA Membership</div>
-      <div id="stripeAmount" style="font-size:1.6rem;font-weight:800">RM 50.00</div>
-    </div>
-    <div style="padding:24px">
-      <div style="font-size:0.85rem;color:#777;text-align:center;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:6px">
-        <span style="display:inline-block;width:12px;height:12px;background:#5469d4;border-radius:50%"></span> Test Mode Payment
-      </div>
-      <button onclick="processMockPayment()" id="stripePayBtn" style="width:100%;background:#5469d4;color:#fff;border:none;padding:14px;border-radius:8px;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s">Pay with Card</button>
-      <button onclick="closeStripeModal()" style="width:100%;background:none;color:#888;border:none;padding:12px;margin-top:8px;font-size:0.85rem;cursor:pointer">Cancel</button>
-      <div id="stripeSpinner" style="display:none;text-align:center;padding:20px;color:#5469d4;font-weight:600">Processing...</div>
-    </div>
-  </div>
-</div>
-<style>@keyframes popIn { from { opacity:0; transform:scale(0.95) } to { opacity:1; transform:scale(1) } }</style>
+
 
 <script>
 /* ══════════════════════════════════════════════
@@ -1375,33 +1358,13 @@ async function submitForm(e) {
     return;
   }
   
-  currentSubmissionId = submissionId;
+  const msgMs = 'Terima kasih! Permohonan anda telah berjaya dihantar. Sila tunggu kelulusan pentadbir sebelum kami menghantar panduan pembayaran ke e-mel anda.';
+  const msgEn = 'Thank you! Your application has been successfully submitted. Please wait for admin approval before we send payment details to your email.';
+  const msgZh = '谢谢！您的申请已成功提交。请等待管理员批准，之后我们会将付款详情发送至您的电子邮件。';
   
-  // Show Mock Stripe Modal
-  document.getElementById('stripeAmount').textContent = 'RM ' + currentAmount.toFixed(2);
-  document.getElementById('stripeModal').style.display = 'flex';
-}
-
-function closeStripeModal() {
-  document.getElementById('stripeModal').style.display = 'none';
-}
-
-async function processMockPayment() {
-  document.getElementById('stripePayBtn').style.display = 'none';
-  document.getElementById('stripeSpinner').style.display = 'block';
+  const msg = currentLang === 'ms' ? msgMs : (currentLang === 'en' ? msgEn : msgZh);
   
-  // Simulate 2 sec network call
-  setTimeout(async () => {
-    // Update Supabase to Paid
-    await sb.from('mama_members').update({ 
-      payment_status: 'paid', 
-      application_status: 'paid',
-      stripe_session_id: 'dummy_sess_' + Date.now()
-    }).eq('id', currentSubmissionId);
-
-    // Redirect to success
-    window.location.href = '/success?ref=' + currentSubmissionId.split('-')[0] + '&amt=' + currentAmount + '&lang=' + currentLang;
-  }, 2000);
+  e.target.innerHTML = '<div style="color:#205295; background:#f0f7ff; border:1px solid #cce3f6; border-radius:8px; font-weight:600; text-align:center; padding:32px 16px;">✅ ' + msg + '</div>';
 }
 
 function submitContact(e) {
