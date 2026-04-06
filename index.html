@@ -1311,12 +1311,17 @@ function setType(type, el) {
   memberType = type;
   document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
+  const icInput = document.getElementById('icnum');
   if (type === 'corporate') {
     document.getElementById('orgGroup').style.display = '';
     document.getElementById('icGroup').style.display = 'none';
+    icInput.required = false;
+    icInput.disabled = true;
   } else {
     document.getElementById('orgGroup').style.display = 'none';
     document.getElementById('icGroup').style.display = '';
+    icInput.required = true;
+    icInput.disabled = false;
   }
   updateFeeNote();
 }
