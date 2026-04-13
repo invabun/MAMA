@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MAMA Ahli Dashboard</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #2d2d2d; min-height: 100vh; line-height: 1.6; }
+    
+    /* LOGIN */
+    #loginScreen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1A4F8B, #0d2e57); padding: 20px; }
+    .login-card { background: #fff; border-radius: 20px; padding: 44px 40px; width: 100%; max-width: 420px; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .login-logo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; margin: 0 auto 16px; display: block; }
+    .login-card h2 { font-size: 1.3rem; font-weight: 800; color: #1A4F8B; margin-bottom: 4px; }
+    .login-card p { font-size: 0.83rem; color: #888; margin-bottom: 28px; }
+    .login-card input { width: 100%; border: 1.5px solid #ddd; border-radius: 10px; padding: 14px; font-size: 0.95rem; outline: none; transition: .2s; margin-bottom: 14px; }
+    .login-card input:focus { border-color: #FF6B35; box-shadow: 0 0 0 3px rgba(255,107,53,0.12); }
+    .login-card button { width: 100%; background: #FF6B35; color: #fff; border: none; border-radius: 10px; padding: 14px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: .2s; }
+    .login-card button:hover { background: #e55a25; transform: translateY(-2px); }
+    .login-card button:disabled { background: #ccc; cursor: not-allowed; transform: none; }
+    
+    .msg-box { display: none; font-size: 0.85rem; padding: 12px; border-radius: 8px; margin-top: 14px; text-align: left; }
+    .msg-box.success { background: #e8f7e8; color: #2d7a2d; border: 1px solid #5cb85c; }
+    .msg-box.error { background: #fee2e2; color: #991b1b; border: 1px solid #ef4444; }
+
+    /* DASHBOARD */
+    #dashboard { display: none; }
+    .topnav { background: #fff; padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 10; }
+    .topnav .brand { display: flex; align-items: center; gap: 12px; }
+    .topnav img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+    .topnav .brand-txt { font-size: 1rem; font-weight: 800; color: #1A4F8B; }
+    .btn-logout { background: #f0f4f8; border: none; color: #555; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: .2s; }
+    .btn-logout:hover { background: #e2e8f0; }
+
+    .main { max-width: 1000px; margin: 40px auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 320px; gap: 30px; }
+    @media (max-width: 800px) { .main { grid-template-columns: 1fr; } }
+    
+    .card { background: #fff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 24px; }
+    .card-hd { background: #1A4F8B; color: #fff; padding: 18px 24px; font-weight: 700; font-size: 1.05rem; display: flex; justify-content: space-between; align-items: center; }
+    .card-body { padding: 24px; }
+
+    /* STATUS RIBBON */
+    .status-ribbon { padding: 12px 24px; font-weight: 700; font-size: 0.9rem; text-align: center; }
+    .bg-new { background: #dbeafe; color: #1d4ed8; }
+    .bg-paid { background: #fef3c7; color: #92400e; }
+    .bg-approved { background: #d1fae5; color: #065f46; }
+    .bg-rejected { background: #fee2e2; color: #991b1b; }
+
+    .stat-row { display: grid; grid-template-columns: 130px 1fr; gap: 12px; margin-bottom: 12px; font-size: 0.9rem; border-bottom: 1px solid #f0f4f8; padding-bottom: 12px; }
+    .stat-row:last-child { border: none; padding-bottom: 0; margin-bottom: 0; }
+    .stat-lbl { color: #888; font-weight: 600; }
+    .stat-val { font-weight: 600; color: #222; }
+
+    /* FORMS */
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.85rem; font-weight: 600; color: #555; margin-bottom: 6px; }
+    .form-group input, .form-group select, .form-group textarea { width: 100%; border: 1.5px solid #ddd; border-radius: 8px; padding: 10px 12px; font-size: 0.9rem; font-family: inherit; transition: .2s; }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: #2E75B6; outline: none; }
+    .btn-save { background: #2E75B6; color: #fff; border: none; padding: 11px 20px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; cursor: pointer; transition: .2s; }
+    .btn-save:hover { background: #1A4F8B; }
+
+    /* FILES LIST */
+    .file-item { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border: 1.5px solid #eaeaea; border-radius: 10px; margin-bottom: 10px; transition: .2s; text-decoration: none; color: inherit; }
+    .file-item:hover { border-color: #2E75B6; background: #f8fafc; }
+    .file-icon { width: 36px; height: 36px; border-radius: 8px; background: #dbeafe; color: #1e40af; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
+    .file-info { flex: 1; overflow: hidden; }
+    .file-name { font-size: 0.88rem; font-weight: 700; color: #1A4F8B; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+    .file-meta { font-size: 0.72rem; color: #888; margin-top: 2px; }
+
+    .loading-app { display: flex; align-items: center; justify-content: center; height: 100vh; font-size: 1.2rem; font-weight: 600; color: #555; }
+  </style>
+</head>
+<body>
+
+<div class="loading-app" id="loadingApp">⏳ Menyemak sesi...</div>
+
+<!-- LOGIN -->
+<div id="loginScreen" style="display:none;">
+  <div class="login-card">
+    <img src="mama_logo.png" class="login-logo" onerror="this.src='mama_logo.jpg'" alt="MAMA"/>
+    <h2>Akses Ahli MAMA</h2>
+    <p>Masukkan e-mel yang didaftarkan untuk masuk</p>
+    <form onsubmit="sendMagicLink(event)">
+      <input type="email" id="emailInput" placeholder="ali@gmail.com" required />
+      <button type="submit" id="loginBtn">Hantar Pautan Log Masuk</button>
+    </form>
+    <div class="msg-box" id="loginMsg"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <nav class="topnav">
+    <div class="brand">
+      <img src="mama_logo.png" onerror="this.src='mama_logo.jpg'" alt="MAMA"/>
+      <div class="brand-txt">MAMA Members</div>
+    </div>
+    <div style="display:flex; align-items:center; gap: 16px;">
+        <a href="index.html" style="font-size:0.85rem; color:#1A4F8B; text-decoration:none; font-weight:600;">← Laman Utama</a>
+        <button class="btn-logout" onclick="doLogout()">Log Keluar</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <!-- LEFT PANEL: PROFILE & FILES -->
+    <div>
+      <div class="card">
+        <div class="card-hd">Butiran Ahli <span id="mType" style="font-size:0.75rem; background:rgba(255,255,255,0.2); padding:3px 10px; border-radius:50px;"></span></div>
+        <div class="status-ribbon" id="mStatusRibbon">Menyemak status...</div>
+        <div class="card-body">
+          <div class="stat-row"><div class="stat-lbl">No. Keahlian</div><div class="stat-val" id="mNum" style="color:#065f46; font-family:monospace;">—</div></div>
+          <div class="stat-row"><div class="stat-lbl">Nama Penuh</div><div class="stat-val" id="mName"></div></div>
+          <div class="stat-row" id="rowOrg" style="display:none;"><div class="stat-lbl">Organisasi</div><div class="stat-val" id="mOrg"></div></div>
+          <div class="stat-row"><div class="stat-lbl">Emel</div><div class="stat-val" id="mEmail"></div></div>
+          <p style="font-size:0.8rem; color:#888; margin-top:20px; font-style:italic;">Nota: Jika anda ingin mengubah emel atau nama penuh, sila hubungi pentadbir (secretary@mama.org.my).</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd">Kemaskini Profil</div>
+        <div class="card-body">
+          <form onsubmit="saveProfile(event)">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div class="form-group">
+                <label>No. Telefon</label>
+                <input type="text" id="mPhone" required />
+              </div>
+              <div class="form-group">
+                <label>Negeri</label>
+                <select id="mState" required>
+                    <option value="">— Pilih —</option>
+                    <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+                    <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+                    <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+                    <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+                    <option>Terengganu</option><option>W.P. Kuala Lumpur</option>
+                    <option>W.P. Labuan</option><option>W.P. Putrajaya</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Industri / Bidang</label>
+              <input type="text" id="mIndustry" required />
+            </div>
+            <div class="form-group">
+              <label>Pengenalan (Tentang Anda/Syarikat)</label>
+              <textarea id="mIntro" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn-save" id="btnSaveProfile">💾 Simpan Kemaskini</button>
+            <div id="profMsg" class="msg-box" style="margin-top:10px;"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL: MOM & INVOICES -->
+    <div>
+      
+      <div class="card" id="momSection" style="display:none;">
+        <div class="card-hd" style="background:#0F3A6A;">Minit Mesyuarat (MOM)</div>
+        <div class="card-body" id="momList" style="padding:16px;">
+          <p style="font-size:0.8rem; color:#666; margin-bottom:14px;">Rekod mesyuarat jawatankuasa MAMA.</p>
+          <a href="records/MOM 0001.pdf" target="_blank" class="file-item">
+            <div class="file-icon">📄</div><div class="file-info"><div class="file-name">MOM 0001 (PDF)</div><div class="file-meta">Dokumen Rasmi</div></div>
+          </a>
+          <a href="records/MOM 0002.docx" target="_blank" class="file-item">
+            <div class="file-icon">📝</div><div class="file-info"><div class="file-name">MOM 0002 (DOCX)</div><div class="file-meta">Minit Mesyuarat</div></div>
+          </a>
+          <a href="records/MOM 0003.docx" target="_blank" class="file-item">
+            <div class="file-icon">📝</div><div class="file-info"><div class="file-name">MOM 0003 (DOCX)</div><div class="file-meta">Minit Mesyuarat</div></div>
+          </a>
+          <a href="records/Mandate Letter.pdf" target="_blank" class="file-item">
+            <div class="file-icon">📄</div><div class="file-info"><div class="file-name">Mandate Letter</div><div class="file-meta">Dokumen PDF</div></div>
+          </a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hd" style="background:#555;">Invois & Dokumen Ahli</div>
+        <div class="card-body" id="invoiceList" style="padding:16px;">
+           <div style="font-size:0.85rem; color:#888; text-align:center; padding:20px;">Memuatkan fail...</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const SB_URL = 'https://tjxposrskeoobldopbac.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqeHBvc3Jza2Vvb2JsZG9wYmFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyODMxMDcsImV4cCI6MjA4OTg1OTEwN30.cwHrt7h72g5Gv_YgSMGuIxvP0z8rkvU8R0Rx1AKdNOU';
+const sb = supabase.createClient(SB_URL, SB_KEY);
+
+let currentUser = null;
+let currentMemberData = null;
+
+// Initialization
+window.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session }, error } = await sb.auth.getSession();
+  
+  // Watch auth state changes (helps with magic links resolving in background)
+  sb.auth.onAuthStateChange((event, sessionObj) => {
+    if (event === 'SIGNED_IN' && sessionObj) {
+      loadDashboard(sessionObj.user);
+    }
+  });
+
+  if (session) {
+    loadDashboard(session.user);
+  } else {
+    document.getElementById('loadingApp').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'flex';
+  }
+});
+
+// Authentication
+async function sendMagicLink(e) {
+  e.preventDefault();
+  const email = document.getElementById('emailInput').value;
+  const btn = document.getElementById('loginBtn');
+  const msg = document.getElementById('loginMsg');
+  
+  btn.disabled = true;
+  btn.textContent = 'Menghantar...';
+  msg.style.display = 'none';
+
+  // Issue magic link (using PKCE)
+  const { data, error } = await sb.auth.signInWithOtp({
+    email: email,
+    options: {
+      emailRedirectTo: window.location.origin + window.location.pathname
+    }
+  });
+
+  if (error) {
+    msg.className = 'msg-box error';
+    msg.innerHTML = '⚠ Ralat: ' + error.message;
+    msg.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Hantar Pautan Log Masuk';
+  } else {
+    msg.className = 'msg-box success';
+    msg.innerHTML = '✅ Pautan magik telah dihantar! Sila semak peti masuk (inbox/spam) emel anda dan klik pautan untuk akses.';
+    msg.style.display = 'block';
+    // keep disabled
+  }
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  window.location.reload();
+}
+
+// Load Dashboard Data
+async function loadDashboard(user) {
+  currentUser = user;
+  document.getElementById('loadingApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'block';
+
+  // Fetch Member Details
+  const { data, error } = await sb.from('mama_members')
+    .select('*')
+    .eq('email', user.email)
+    .single();
+
+  if (error || !data) {
+    // Member record not found for this email
+    document.querySelector('.main').innerHTML = `
+      <div class="card" style="grid-column: 1/-1; text-align:center; padding: 40px;">
+        <h3>Akses Ditolak</h3>
+        <p>Rekod keahlian MAMA untuk emel <strong>${user.email}</strong> tidak ditemui dalam sistem.</p>
+        <p>Hanya emel yang telah memohon dan didaftarkan melalui borang kami dibenarkan akses.</p>
+      </div>`;
+    return;
+  }
+
+  currentMemberData = data;
+  populateDashboard();
+  loadInvoices();
+}
+
+function populateDashboard() {
+  const m = currentMemberData;
+  const statusLabels = { new:'Baru (Belum Berbayar)', paid:'Menunggu Kelulusan', approved:'Keahlian Aktif', rejected:'Ditolak' };
+  
+  const rbn = document.getElementById('mStatusRibbon');
+  rbn.textContent = statusLabels[m.application_status] || m.application_status;
+  rbn.className = 'status-ribbon bg-' + m.application_status;
+
+  const tyLbl = { individual:'Individu', corporate:'Korporat', academic:'Akademik' };
+  document.getElementById('mType').textContent = tyLbl[m.member_type] || m.member_type;
+  
+  document.getElementById('mNum').textContent = m.membership_number || '—';
+  document.getElementById('mName').textContent = m.full_name;
+  document.getElementById('mEmail').textContent = m.email;
+  
+  if(m.org_name) {
+    document.getElementById('rowOrg').style.display = 'grid';
+    document.getElementById('mOrg').textContent = m.org_name;
+  }
+
+  // Populate Form
+  document.getElementById('mPhone').value = m.phone || '';
+  document.getElementById('mState').value = m.state || '';
+  document.getElementById('mIndustry').value = m.industry || '';
+  document.getElementById('mIntro').value = m.intro || '';
+
+  // MOM Permission
+  if (m.permissions && m.permissions.can_view_mom === true) {
+    document.getElementById('momSection').style.display = 'block';
+  } else {
+    document.getElementById('momSection').style.display = 'none';
+  }
+}
+
+async function saveProfile(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnSaveProfile');
+  const msg = document.getElementById('profMsg');
+  btn.disabled = true;
+  btn.textContent = 'Menyimpan...';
+
+  const updates = {
+    phone: document.getElementById('mPhone').value,
+    state: document.getElementById('mState').value,
+    industry: document.getElementById('mIndustry').value,
+    intro: document.getElementById('mIntro').value
+  };
+
+  const { error } = await sb.from('mama_members')
+    .update(updates)
+    .eq('id', currentMemberData.id);
+
+  btn.disabled = false;
+  btn.textContent = '💾 Simpan Kemaskini';
+
+  if (error) {
+    msg.className = 'msg-box error';
+    msg.innerHTML = '⚠ Ralat: ' + error.message;
+    msg.style.display = 'block';
+  } else {
+    msg.className = 'msg-box success';
+    msg.innerHTML = '✅ Profil anda telah berjaya dikemaskini.';
+    msg.style.display = 'block';
+    setTimeout(() => { msg.style.display = 'none'; }, 4000);
+  }
+}
+
+async function loadInvoices() {
+  const invoiceList = document.getElementById('invoiceList');
+  if(!currentMemberData) return;
+
+  const { data, error } = await sb.from('mama_member_files')
+    .select('*')
+    .eq('member_id', currentMemberData.id);
+
+  if (error) {
+    invoiceList.innerHTML = '<div style="color:red; font-size:0.8rem;">Gagal memuat fail: '+error.message+'</div>';
+    return;
+  }
+
+  if(!data || data.length === 0) {
+    invoiceList.innerHTML = '<div style="color:#aaa; font-size:0.85rem; text-align:center; padding:20px;">Tiada invois atau fail dilampirkan oleh sistem.</div>';
+    return;
+  }
+
+  let html = '';
+  data.forEach(f => {
+    html += `
+      <a href="${f.file_url}" target="_blank" class="file-item">
+        <div class="file-icon">📥</div>
+        <div class="file-info"><div class="file-name">${f.file_name.replace(/</g,'&lt;')}</div><div class="file-meta">${f.file_type.toUpperCase()}</div></div>
+      </a>`;
+  });
+  invoiceList.innerHTML = html;
+}
+</script>
+</body>
+</html>

@@ -348,19 +348,67 @@ async function rejectMember(id) {
 
 async function saveNotes(id) {
   const notes = document.getElementById('notesField').value;
-  const { error } = await sb.from('mama_members').update({ admin_notes:notes }).eq('id',id);
+  const canViewMom = document.getElementById('permMom').checked;
+  const { error } = await sb.from('mama_members').update({ 
+    admin_notes: notes, 
+    permissions: { can_view_mom: canViewMom }
+  }).eq('id',id);
   if (error) { showToast('Ralat: '+error.message,'error'); return; }
-  showToast('Nota disimpan.','success');
+  showToast('Disimpan.','success');
   await loadMembers();
+  viewMember(id); // refresh modal to show updated data
+}
+
+async function uploadInvoice(memberId) {
+  const fileInput = document.getElementById('fileUpload');
+  if(!fileInput.files.length) return alert('Sila pilih fail dahulu.');
+  const file = fileInput.files[0];
+  const t = Date.now();
+  const filePath = memberId + '/' + t + '_' + file.name;
+  
+  showToast('Memuat naik fail...', '');
+  // Disable button to prevent double upload
+  event.target.disabled = true;
+  event.target.textContent = 'Memuat naik...';
+
+  const { error: uploadError } = await sb.storage.from('mama_files').upload(filePath, file);
+  if(uploadError) {
+    showToast('Ralat Upload: ' + uploadError.message, 'error');
+    event.target.disabled = false;
+    event.target.textContent = 'Upload Invois';
+    return;
+  }
+  
+  const { data: publicUrlData } = sb.storage.from('mama_files').getPublicUrl(filePath);
+  
+  const { error: dbError } = await sb.from('mama_member_files').insert([{
+    member_id: memberId,
+    file_name: file.name,
+    file_url: publicUrlData.publicUrl,
+    file_type: 'invoice'
+  }]);
+  
+  if(dbError) {
+    showToast('Ralat DB: ' + dbError.message, 'error');
+  } else {
+    showToast('Selesai dimuat naik.', 'success');
+    viewMember(memberId);
+  }
 }
 
 // ── View Modal ──
-function viewMember(id) {
+async function viewMember(id) {
   currentMemberId = id;
   const m = allMembers.find(x => x.id === id);
   if (!m) return;
-  const typeLabel = { individual:'Individu', corporate:'Korporat', academic:'Akademik' };
+  
   document.getElementById('modalTitle').textContent = m.full_name + ' — Butiran';
+  document.getElementById('modalContent').innerHTML = '<div class="loading">⏳ Memuatkan...</div>';
+  document.getElementById('memberModal').classList.add('open');
+
+  const { data: files } = await sb.from('mama_member_files').select('*').eq('member_id', id);
+
+  const typeLabel = { individual:'Individu', corporate:'Korporat', academic:'Akademik' };
   const d = (k,v) => `<div class="detail-row"><div class="detail-label">${k}</div><div class="detail-val">${v||'—'}</div></div>`;
   let html = `
     ${d('ID Sistem','<span style="font-family:monospace;font-size:.8rem">'+m.id+'</span>')}
@@ -379,6 +427,23 @@ function viewMember(id) {
     ${d('Status Permohonan', statusLabel(m.application_status))}
     ${m.membership_number?d('No. Keahlian','<strong style="color:#065f46;font-family:monospace">'+m.membership_number+'</strong>'):''}
     ${m.intro?d('Pengenalan','<em>'+esc(m.intro)+'</em>'):''}
+    <div style="margin-top:16px">
+      <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">Kebenaran Sistem (Permissions)</div>
+      <label style="font-size:0.85rem;display:flex;align-items:center;gap:8px">
+        <input type="checkbox" id="permMom" ${m.permissions?.can_view_mom ? 'checked' : ''} />
+        Boleh Akses Dokumen MOM (Minit Mesyuarat)
+      </label>
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">Fail & Invois Ahli</div>
+      <div style="display:flex;gap:8px;margin-bottom:10px">
+        <input type="file" id="fileUpload" style="font-size:0.8rem;flex:1;border:1px solid #ddd;padding:4px;border-radius:4px" />
+        <button style="padding:6px 12px;font-size:0.8rem;background:#2E75B6;color:#fff;border:none;border-radius:4px;cursor:pointer" onclick="uploadInvoice('${m.id}')">Upload Invois</button>
+      </div>
+      <div style="font-size:0.8rem;background:#f8fafc;padding:8px;border-radius:6px">
+        ${files && files.length ? files.map(f => `<div style="margin-bottom:4px">📄 <a href="${f.file_url}" target="_blank" style="color:#1A4F8B;text-decoration:underline">${esc(f.file_name)}</a> <span style="color:#aaa;font-size:0.7rem">(${f.file_type})</span></div>`).join('') : '<span style="color:#888">Tiada fail.</span>'}
+      </div>
+    </div>
     <div style="margin-top:16px">
       <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">Nota Admin</div>
       <textarea class="notes-area" id="notesField" placeholder="Tambah nota pentadbiran...">${esc(m.admin_notes)}</textarea>
