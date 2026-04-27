@@ -133,55 +133,56 @@
     </div>
     <div class="nav-right">
       <span id="adminTime" style="opacity:.7"></span>
-      <button class="btn-logout" onclick="doLogout()">Log Keluar</button>
+      <button class="btn-logout" onclick="doLogout()">Log Out</button>
     </div>
   </nav>
 
   <div class="main">
     <!-- STATS -->
     <div class="stats">
-      <div class="stat-card"><div class="label">Jumlah Permohonan</div><div class="val" id="sTotal">—</div><div class="delta">Semua masa</div></div>
-      <div class="stat-card orange"><div class="label">Menunggu Semakan</div><div class="val" id="sPending">—</div><div class="delta">Perlu tindakan</div></div>
-      <div class="stat-card green"><div class="label">Diluluskan</div><div class="val" id="sApproved">—</div><div class="delta">Ahli aktif</div></div>
-      <div class="stat-card"><div class="label">Jumlah Kutipan</div><div class="val" id="sRevenue">—</div><div class="delta">Pembayaran diterima</div></div>
+      <div class="stat-card"><div class="label">Total Applications</div><div class="val" id="sTotal">—</div><div class="delta">All time</div></div>
+      <div class="stat-card orange"><div class="label">Pending Review</div><div class="val" id="sPending">—</div><div class="delta">Needs action</div></div>
+      <div class="stat-card green"><div class="label">Approved</div><div class="val" id="sApproved">—</div><div class="delta">Active members</div></div>
+      <div class="stat-card"><div class="label">Total Collected</div><div class="val" id="sRevenue">—</div><div class="delta">Payments received</div></div>
     </div>
 
     <!-- FILTERS -->
     <div class="filter-bar">
-      <input type="text" id="searchInput" placeholder="🔍  Cari nama, emel, atau nombor ahli..." oninput="filterTable()"/>
+      <input type="text" id="searchInput" placeholder="🔍  Search name, email or member no..." oninput="filterTable()"/>
       <select id="filterStatus" onchange="filterTable()">
-        <option value="">Semua Status</option>
-        <option value="paid">Paid – Menunggu</option>
-        <option value="approved">Diluluskan</option>
-        <option value="rejected">Ditolak</option>
-        <option value="new">Baru (Belum Bayar)</option>
+        <option value="">All Status</option>
+        <option value="paid">Paid – Pending</option>
+        <option value="approved">Approved</option>
+        <option value="rejected">Rejected</option>
+        <option value="new">New (Unpaid)</option>
       </select>
       <select id="filterType" onchange="filterTable()">
-        <option value="">Semua Jenis</option>
-        <option value="individual">Individu</option>
-        <option value="corporate">Korporat</option>
-        <option value="academic">Akademik</option>
+        <option value="">All Types</option>
+        <option value="individual">Individual</option>
+        <option value="corporate">Corporate</option>
+        <option value="academic">Academic</option>
+        <option value="student">Student (FOC)</option>
       </select>
       <select id="filterState" onchange="filterTable()">
-        <option value="">Semua Negeri</option>
+        <option value="">All States</option>
         <option>Johor</option><option>Kedah</option><option>Kelantan</option>
         <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
         <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
         <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
         <option>Terengganu</option><option>W.P. Kuala Lumpur</option>
       </select>
-      <button class="btn-refresh" onclick="loadMembers()">↻ Muat Semula</button>
+      <button class="btn-refresh" onclick="loadMembers()">↻ Refresh</button>
       <button class="btn-csv" onclick="exportCSV()">⬇ Export CSV</button>
     </div>
 
     <!-- TABLE -->
     <div class="table-wrap">
       <div class="table-head">
-        <h3>Senarai Permohonan Keahlian</h3>
+        <h3>Membership Applications</h3>
         <span class="count" id="tableCount"></span>
       </div>
       <div id="tableBody">
-        <div class="empty">⏳ Memuatkan data...</div>
+        <div class="empty">⏳ Loading data...</div>
       </div>
     </div>
   </div>
@@ -252,9 +253,9 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 // ── Data ──
 async function loadMembers() {
-  document.getElementById('tableBody').innerHTML = '<div class="empty"><span class="loading">⏳</span> Memuatkan...</div>';
+  document.getElementById('tableBody').innerHTML = '<div class="empty"><span class="loading">⏳</span> Loading...</div>';
   const { data, error } = await sb.from('mama_members').select('*').order('created_at', { ascending: false });
-  if (error) { showToast('Ralat: ' + error.message, 'error'); return; }
+  if (error) { showToast('Error: ' + error.message, 'error'); return; }
   allMembers = data || [];
   updateStats();
   filterTable();
@@ -283,24 +284,24 @@ function filterTable() {
     const matchSta = !sta || m.state === sta;
     return matchQ && matchSt && matchTy && matchSta;
   });
-  document.getElementById('tableCount').textContent = rows.length + ' rekod';
+  document.getElementById('tableCount').textContent = rows.length + ' records';
   renderTable(rows);
 }
 
 function renderTable(rows) {
   if (!rows.length) {
-    document.getElementById('tableBody').innerHTML = '<div class="empty">🔍 Tiada rekod dijumpai.</div>';
+    document.getElementById('tableBody').innerHTML = '<div class="empty">🔍 No records found.</div>';
     return;
   }
-  const typeLabel = { individual:'Individu', corporate:'Korporat', academic:'Akademik' };
-  const typeBadge = { individual:'ind', corporate:'corp', academic:'acad' };
+  const typeLabel = { individual:'Individual', corporate:'Corporate', academic:'Academic', student:'Student (FOC)' };
+  const typeBadge = { individual:'ind', corporate:'corp', academic:'acad', student:'ind' };
   let html = `<table><thead><tr>
-    <th>#</th><th>Nama</th><th>Jenis</th><th>Emel</th><th>Negeri</th>
-    <th>Jumlah</th><th>Bayar</th><th>Status</th><th>Tarikh</th><th>Tindakan</th>
+    <th>#</th><th>Name</th><th>Type</th><th>Email</th><th>State</th>
+    <th>Amount</th><th>Payment</th><th>Status</th><th>Date</th><th>Actions</th>
   </tr></thead><tbody>`;
   rows.forEach((m, i) => {
-    const d = new Date(m.created_at).toLocaleDateString('ms-MY',{day:'2-digit',month:'short',year:'numeric'});
-    const payBadge = m.payment_status==='paid' ? '<span class="badge paid">Bayar</span>' : '<span class="badge pending">Belum</span>';
+    const d = new Date(m.created_at).toLocaleDateString('en-MY',{day:'2-digit',month:'short',year:'numeric'});
+    const payBadge = m.payment_status==='foc' ? '<span class="badge paid">FOC</span>' : m.payment_status==='paid' ? '<span class="badge paid">Paid</span>' : '<span class="badge pending">Pending</span>';
     html += `<tr>
       <td style="color:#aaa;font-size:.8rem">${i+1}</td>
       <td><strong>${esc(m.full_name)}</strong>${m.membership_number?'<br><span style="font-size:.7rem;color:#2E75B6;font-family:monospace">'+esc(m.membership_number)+'</span>':''}</td>
@@ -312,8 +313,8 @@ function renderTable(rows) {
       <td><span class="badge ${m.application_status}">${statusLabel(m.application_status)}</span></td>
       <td style="font-size:.78rem;color:#888;white-space:nowrap">${d}</td>
       <td><div class="action-btns">
-        <button class="btn-view" onclick="viewMember('${m.id}')">👁 Lihat</button>
-        ${m.application_status==='paid'?`<button class="btn-approve" onclick="approveMember('${m.id}')">✓ Lulus</button><button class="btn-reject" onclick="rejectMember('${m.id}')">✕ Tolak</button>`:''}
+        <button class="btn-view" onclick="viewMember('${m.id}')">👁 View</button>
+        ${m.application_status==='paid'?`<button class="btn-approve" onclick="approveMember('${m.id}')">✓ Approve</button><button class="btn-reject" onclick="rejectMember('${m.id}')">✕ Reject</button>`:''}
       </div></td>
     </tr>`;
   });
@@ -322,7 +323,7 @@ function renderTable(rows) {
 }
 
 function statusLabel(s) {
-  return {new:'Baru',paid:'Menunggu',approved:'Diluluskan',rejected:'Ditolak'}[s]||s;
+  return {new:'New',paid:'Pending',approved:'Approved',rejected:'Rejected'}[s]||s;
 }
 function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -331,17 +332,17 @@ async function approveMember(id) {
   const { count } = await sb.from('mama_members').select('*',{count:'exact',head:true}).eq('application_status','approved');
   const num = 'MAMA-2026-' + String((count||0)+1).padStart(4,'0');
   const { error } = await sb.from('mama_members').update({ application_status:'approved', membership_number:num }).eq('id',id);
-  if (error) { showToast('Ralat: '+error.message,'error'); return; }
-  showToast('✓ Ahli diluluskan — ' + num, 'success');
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  showToast('✓ Member approved — ' + num, 'success');
   await loadMembers();
   if (currentMemberId === id) closeModal();
 }
 
 async function rejectMember(id) {
-  if (!confirm('Tolak permohonan ini?')) return;
+  if (!confirm('Reject this application?')) return;
   const { error } = await sb.from('mama_members').update({ application_status:'rejected' }).eq('id',id);
-  if (error) { showToast('Ralat: '+error.message,'error'); return; }
-  showToast('Permohonan ditolak.', 'error');
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  showToast('Application rejected.', 'error');
   await loadMembers();
   if (currentMemberId === id) closeModal();
 }
@@ -353,29 +354,29 @@ async function saveNotes(id) {
     admin_notes: notes, 
     permissions: { can_view_mom: canViewMom }
   }).eq('id',id);
-  if (error) { showToast('Ralat: '+error.message,'error'); return; }
-  showToast('Disimpan.','success');
+  if (error) { showToast('Error: '+error.message,'error'); return; }
+  showToast('Saved.','success');
   await loadMembers();
   viewMember(id); // refresh modal to show updated data
 }
 
 async function uploadInvoice(memberId) {
   const fileInput = document.getElementById('fileUpload');
-  if(!fileInput.files.length) return alert('Sila pilih fail dahulu.');
+  if(!fileInput.files.length) return alert('Please select a file first.');
   const file = fileInput.files[0];
   const t = Date.now();
   const filePath = memberId + '/' + t + '_' + file.name;
   
-  showToast('Memuat naik fail...', '');
+  showToast('Uploading file...', '');
   // Disable button to prevent double upload
   event.target.disabled = true;
-  event.target.textContent = 'Memuat naik...';
+  event.target.textContent = 'Uploading...';
 
   const { error: uploadError } = await sb.storage.from('mama_files').upload(filePath, file);
   if(uploadError) {
-    showToast('Ralat Upload: ' + uploadError.message, 'error');
+    showToast('Upload Error: ' + uploadError.message, 'error');
     event.target.disabled = false;
-    event.target.textContent = 'Upload Invois';
+    event.target.textContent = 'Upload Invoice';
     return;
   }
   
@@ -389,9 +390,9 @@ async function uploadInvoice(memberId) {
   }]);
   
   if(dbError) {
-    showToast('Ralat DB: ' + dbError.message, 'error');
+    showToast('DB Error: ' + dbError.message, 'error');
   } else {
-    showToast('Selesai dimuat naik.', 'success');
+    showToast('File uploaded successfully.', 'success');
     viewMember(memberId);
   }
 }
@@ -402,55 +403,55 @@ async function viewMember(id) {
   const m = allMembers.find(x => x.id === id);
   if (!m) return;
   
-  document.getElementById('modalTitle').textContent = m.full_name + ' — Butiran';
-  document.getElementById('modalContent').innerHTML = '<div class="loading">⏳ Memuatkan...</div>';
+  document.getElementById('modalTitle').textContent = m.full_name + ' — Details';
+  document.getElementById('modalContent').innerHTML = '<div class="loading">⏳ Loading...</div>';
   document.getElementById('memberModal').classList.add('open');
 
   const { data: files } = await sb.from('mama_member_files').select('*').eq('member_id', id);
 
-  const typeLabel = { individual:'Individu', corporate:'Korporat', academic:'Akademik' };
+  const typeLabel = { individual:'Individual', corporate:'Corporate', academic:'Academic', student:'Student (FOC)' };
   const d = (k,v) => `<div class="detail-row"><div class="detail-label">${k}</div><div class="detail-val">${v||'—'}</div></div>`;
   let html = `
-    ${d('ID Sistem','<span style="font-family:monospace;font-size:.8rem">'+m.id+'</span>')}
-    ${d('Tarikh Daftar', new Date(m.created_at).toLocaleString('ms-MY'))}
-    ${d('Jenis Ahli', typeLabel[m.member_type]||m.member_type)}
-    ${d('Nama Penuh', m.full_name)}
-    ${d('Organisasi', m.org_name)}
-    ${d('No. IC / Pasport', m.ic_passport)}
-    ${d('Emel', '<a href="mailto:'+m.email+'" style="color:#2E75B6">'+m.email+'</a>')}
-    ${d('Telefon', m.phone)}
-    ${d('Negeri', m.state)}
-    ${d('Industri', m.industry)}
-    ${d('Sumber', m.source)}
-    ${d('Status Bayaran', m.payment_status)} 
-    ${d('Jumlah (RM)', m.payment_amount)}
-    ${d('Status Permohonan', statusLabel(m.application_status))}
-    ${m.membership_number?d('No. Keahlian','<strong style="color:#065f46;font-family:monospace">'+m.membership_number+'</strong>'):''}
-    ${m.intro?d('Pengenalan','<em>'+esc(m.intro)+'</em>'):''}
+    ${d('System ID','<span style="font-family:monospace;font-size:.8rem">'+m.id+'</span>')}
+    ${d('Registration Date', new Date(m.created_at).toLocaleString('en-MY'))}
+    ${d('Member Type', typeLabel[m.member_type]||m.member_type)}
+    ${d('Full Name', m.full_name)}
+    ${d('Organisation / Institution', m.org_name)}
+    ${d('IC / Passport / Matric No.', m.ic_passport)}
+    ${d('Email', '<a href="mailto:'+m.email+'" style="color:#2E75B6">'+m.email+'</a>')}
+    ${d('Phone', m.phone)}
+    ${d('State', m.state)}
+    ${d('Industry', m.industry)}
+    ${d('Source', m.source)}
+    ${d('Payment Status', m.payment_status)}
+    ${d('Amount (RM)', m.payment_amount)}
+    ${d('Application Status', statusLabel(m.application_status))}
+    ${m.membership_number?d('Membership No.','<strong style="color:#065f46;font-family:monospace">'+m.membership_number+'</strong>'):''}
+    ${m.intro?d('Introduction / Notes','<em>'+esc(m.intro)+'</em>'):''}
     <div style="margin-top:16px">
-      <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">Kebenaran Sistem (Permissions)</div>
+      <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">System Permissions</div>
       <label style="font-size:0.85rem;display:flex;align-items:center;gap:8px">
         <input type="checkbox" id="permMom" ${m.permissions?.can_view_mom ? 'checked' : ''} />
-        Boleh Akses Dokumen MOM (Minit Mesyuarat)
+        Can Access MOM Documents (Minutes of Meeting)
       </label>
     </div>
     <div style="margin-top:16px">
-      <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">Fail & Invois Ahli</div>
+      <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">Files & Invoices</div>
       <div style="display:flex;gap:8px;margin-bottom:10px">
         <input type="file" id="fileUpload" style="font-size:0.8rem;flex:1;border:1px solid #ddd;padding:4px;border-radius:4px" />
-        <button style="padding:6px 12px;font-size:0.8rem;background:#2E75B6;color:#fff;border:none;border-radius:4px;cursor:pointer" onclick="uploadInvoice('${m.id}')">Upload Invois</button>
+        <button style="padding:6px 12px;font-size:0.8rem;background:#2E75B6;color:#fff;border:none;border-radius:4px;cursor:pointer" onclick="uploadInvoice('${m.id}')">Upload Invoice</button>
       </div>
       <div style="font-size:0.8rem;background:#f8fafc;padding:8px;border-radius:6px">
-        ${files && files.length ? files.map(f => `<div style="margin-bottom:4px">📄 <a href="${f.file_url}" target="_blank" style="color:#1A4F8B;text-decoration:underline">${esc(f.file_name)}</a> <span style="color:#aaa;font-size:0.7rem">(${f.file_type})</span></div>`).join('') : '<span style="color:#888">Tiada fail.</span>'}
+        ${files && files.length ? files.map(f => `<div style="margin-bottom:4px">📄 <a href="${f.file_url}" target="_blank" style="color:#1A4F8B;text-decoration:underline">${esc(f.file_name)}</a> <span style="color:#aaa;font-size:0.7rem">(${f.file_type})</span></div>`).join('') : '<span style="color:#888">No files uploaded.</span>'}
       </div>
     </div>
     <div style="margin-top:16px">
-      <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">Nota Admin</div>
-      <textarea class="notes-area" id="notesField" placeholder="Tambah nota pentadbiran...">${esc(m.admin_notes)}</textarea>
+      <div style="font-size:.82rem;font-weight:700;color:#555;margin-bottom:6px">Admin Notes</div>
+      <textarea class="notes-area" id="notesField" placeholder="Add admin notes...">${esc(m.admin_notes)}</textarea>
     </div>
     <div class="modal-actions">
-      <button class="btn-save-notes" onclick="saveNotes('${m.id}')">💾 Simpan Nota</button>
-      ${m.application_status==='paid'?`<button class="btn-approve" style="padding:10px 20px;border-radius:8px;font-size:.85rem" onclick="approveMember('${m.id}')">✓ Lulus</button><button class="btn-reject" style="padding:10px 20px;border-radius:8px;font-size:.85rem" onclick="rejectMember('${m.id}')">✕ Tolak</button>`:''}
+      <button class="btn-save-notes" onclick="saveNotes('${m.id}')">💾 Save Notes</button>
+      ${m.application_status==='paid'?`<button class="btn-approve" style="padding:10px 20px;border-radius:8px;font-size:.85rem" onclick="approveMember('${m.id}')">✓ Approve</button><button class="btn-reject" style="padding:10px 20px;border-radius:8px;font-size:.85rem" onclick="rejectMember('${m.id}')">✕ Reject</button>`:''}
     </div>
   `;
   document.getElementById('modalContent').innerHTML = html;
@@ -464,7 +465,7 @@ document.getElementById('memberModal').addEventListener('click', e => { if(e.tar
 
 // ── CSV Export ──
 function exportCSV() {
-  const headers = ['ID','Tarikh','Jenis','Nama','Organisasi','IC/Pasport','Emel','Telefon','Negeri','Industri','Sumber','Status Bayar','Jumlah','Status Permohonan','No. Keahlian','Nota Admin'];
+  const headers = ['ID','Date','Type','Name','Organisation','IC/Passport/Matric','Email','Phone','State','Industry','Source','Payment Status','Amount','Application Status','Membership No.','Admin Notes'];
   const rows = allMembers.map(m => [
     m.id, new Date(m.created_at).toLocaleString(), m.member_type, m.full_name, m.org_name||'',
     m.ic_passport||'', m.email, m.phone, m.state, m.industry, m.source||'',
