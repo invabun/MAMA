@@ -525,12 +525,13 @@
     <div class="section-tag" data-i18n="mem_tag">Keahlian</div>
     <h2 class="section-title" data-i18n="mem_title">Sertai Komuniti MAMA</h2>
     <p class="section-sub" data-i18n="mem_sub">Sama ada anda pengamal individu, syarikat, atau institusi akademik — terdapat kategori keahlian untuk anda.</p>
-    <div class="mem-cards">
+    <div class="mem-cards" style="grid-template-columns:repeat(3,1fr);">
+      <!-- INDIVIDUAL -->
       <div class="mem-card">
         <div class="mem-icon">👤</div>
         <div class="mem-type" data-i18n="mt1">Individu</div>
         <div class="mem-price">RM 50</div>
-        <div class="mem-price-sub" data-i18n="mp1">Pendaftaran + RM 50/tahun yuran tahunan</div>
+        <div class="mem-price-sub" data-i18n="mp1">/ tahun</div>
         <ul>
           <li data-i18n="mi1_1">Akses ke direktori ahli</li>
           <li data-i18n="mi1_2">Jemputan ke semua acara MAMA</li>
@@ -540,11 +541,12 @@
         </ul>
         <a href="#register" class="btn-mem" data-i18n="mem_reg_btn">Daftar Sekarang</a>
       </div>
+      <!-- CORPORATE -->
       <div class="mem-card featured">
         <div class="mem-icon">🏢</div>
         <div class="mem-type" data-i18n="mt2">Korporat / Organisasi</div>
-        <div class="mem-price">RM 50</div>
-        <div class="mem-price-sub" data-i18n="mp2">Pendaftaran + RM 100/tahun yuran tahunan</div>
+        <div class="mem-price">RM 200</div>
+        <div class="mem-price-sub" data-i18n="mp2">/ tahun</div>
         <ul>
           <li data-i18n="mi2_1">Semua manfaat Individu</li>
           <li data-i18n="mi2_2">Profil syarikat dalam direktori ahli</li>
@@ -555,31 +557,28 @@
         </ul>
         <a href="#register" class="btn-mem" data-i18n="mem_reg_btn">Daftar Sekarang</a>
       </div>
-      <div class="mem-card">
-        <div class="mem-icon">🏫</div>
-        <div class="mem-type" data-i18n="mt3">Institusi / Universiti</div>
-        <div class="mem-price">RM 50</div>
-        <div class="mem-price-sub" data-i18n="mp3">Pendaftaran + RM 50/tahun yuran tahunan</div>
-        <ul>
+      <!-- ACADEMIC + STUDENT (merged) -->
+      <div class="mem-card" style="border:2px solid #27ae60;">
+        <div class="mem-icon">🏫🎓</div>
+        <div class="mem-type" data-i18n="mt3" style="color:#27ae60;">Akademik &amp; Pelajar</div>
+        <!-- Split price display -->
+        <div style="display:flex;gap:10px;justify-content:center;align-items:flex-end;margin:10px 0 4px;">
+          <div style="text-align:center;">
+            <div style="font-size:1.1rem;font-weight:800;color:#1A4F8B;">RM 50</div>
+            <div style="font-size:0.65rem;color:#888;" data-i18n="mp3_sub">Institusi / thn</div>
+          </div>
+          <div style="color:#ccc;font-size:1.2rem;padding-bottom:4px;">|</div>
+          <div style="text-align:center;">
+            <div style="font-size:1.1rem;font-weight:800;color:#27ae60;" data-i18n="mp4_price">PERCUMA</div>
+            <div style="font-size:0.65rem;color:#888;" data-i18n="mp4_sub">Pelajar Aktif</div>
+          </div>
+        </div>
+        <ul style="margin-top:14px;">
           <li data-i18n="mi3_1">Universiti, kolej atau politeknik</li>
           <li data-i18n="mi3_2">Rangkaian kerjasama penyelidikan</li>
-          <li data-i18n="mi3_3">Anjur webinar pendidikan bersama</li>
-          <li data-i18n="mi3_4">Sokongan cawangan pelajar</li>
-          <li data-i18n="mi3_5">Jaringan industri-akademia</li>
-        </ul>
-        <a href="#register" class="btn-mem" data-i18n="mem_reg_btn">Daftar Sekarang</a>
-      </div>
-      <div class="mem-card" style="border:2px solid #27ae60;">
-        <div class="mem-icon">🎓</div>
-        <div class="mem-type" data-i18n="mt4" style="color:#27ae60;">Pelajar Akademik</div>
-        <div class="mem-price" style="color:#27ae60;" data-i18n="mp4_price">PERCUMA</div>
-        <div class="mem-price-sub" data-i18n="mp4">Keahlian Percuma untuk Pelajar Aktif</div>
-        <ul>
-          <li data-i18n="mi4_1">Pelajar universiti / kolej / politeknik</li>
           <li data-i18n="mi4_2">Perlu emel institusi &amp; ID Pelajar</li>
           <li data-i18n="mi4_3">Pengesahan pensyarah diperlukan</li>
-          <li data-i18n="mi4_4">Akses ke acara &amp; webinar MAMA</li>
-          <li data-i18n="mi4_5">Sijil keahlian pelajar digital</li>
+          <li data-i18n="mi3_5">Jaringan industri-akademia</li>
         </ul>
         <a href="#register" class="btn-mem" data-i18n="mem_reg_btn" style="background:#e6f9ee;color:#27ae60;">Daftar Sekarang</a>
       </div>
@@ -1031,22 +1030,22 @@ const T = {
     m11:"Galakkan penyelidikan &amp; inovasi dalam AM", m12:"Kekalkan kewangan Persatuan yang mampan",
     mem_tag:"Keahlian", mem_title:"Sertai Komuniti MAMA",
     mem_sub:"Sama ada anda pengamal individu, syarikat, atau institusi akademik — terdapat kategori keahlian untuk anda.",
-    mt1:"Individu", mp1:"Pendaftaran + RM 50/tahun yuran tahunan",
+    mt1:"Individu", mp1:"/ tahun",
     mi1_1:"Akses ke direktori ahli", mi1_2:"Jemputan ke semua acara MAMA",
     mi1_3:"Langganan surat berita eRoses", mi1_4:"Peluang rangkaian &amp; kerjasama", mi1_5:"Sijil keahlian digital",
-    mt2:"Korporat / Organisasi", mp2:"Pendaftaran + RM 100/tahun yuran tahunan",
+    mt2:"Korporat / Organisasi", mp2:"/ tahun",
     mi2_1:"Semua manfaat Individu", mi2_2:"Profil syarikat dalam direktori ahli",
     mi2_3:"Peluang penajaan acara keutamaan", mi2_4:"Kemudahan padanan perniagaan",
     mi2_5:"Logo di laman web MAMA", mi2_6:"Hak mengundi di AGM",
-    mt3:"Institusi / Universiti", mp3:"Pendaftaran + RM 50/tahun yuran tahunan",
+    mt3:"Akademik &amp; Pelajar", mp3:"/ tahun", mp3_sub:"Institusi / thn", mp4_sub:"Pelajar Aktif",
     mi3_1:"Universiti, kolej atau politeknik", mi3_2:"Rangkaian kerjasama penyelidikan",
     mi3_3:"Anjur webinar pendidikan bersama", mi3_4:"Sokongan cawangan pelajar", mi3_5:"Jaringan industri-akademia",
     mem_reg_btn:"Daftar Sekarang",
     reg_tag:"Pendaftaran Dalam Talian", reg_title:"Jadi Ahli MAMA",
     reg_sub:"Isi borang di bawah. Urusetia kami akan menghubungi anda dalam masa 3 hari bekerja dengan maklumat pembayaran.",
     toggle_ind:"👤 Individu / Akademik", toggle_corp:"🏢 Korporat / Organisasi", toggle_stu:"🎓 Pelajar (FOC)",
-    fee_label:"Yuran Keahlian Individu:", fee_ind_text:"RM 50 (pendaftaran satu kali) + RM 50/tahun (yuran tahunan). Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.",
-    fee_corp_text:"RM 50 (pendaftaran satu kali) + RM 100/tahun (yuran tahunan). Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.",
+    fee_label:"Yuran Keahlian Individu:", fee_ind_text:"RM 50/tahun. Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.",
+    fee_corp_text:"RM 200/tahun. Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.",
     fee_corp_label:"Yuran Keahlian Korporat:",
     fee_stu_label:"Keahlian Pelajar Akademik:", fee_stu_text:"PERCUMA (FOC) — Terbuka untuk pelajar aktif di universiti, kolej, atau politeknik berdaftar di Malaysia. Pengesahan pensyarah diperlukan.",
     mt4:"Pelajar Akademik", mp4_price:"PERCUMA", mp4:"Keahlian Percuma untuk Pelajar Aktif",
@@ -1155,22 +1154,22 @@ const T = {
     m11:"Encourage R&amp;D and innovation in AM", m12:"Maintain financial sustainability of the Association",
     mem_tag:"Membership", mem_title:"Join the MAMA Community",
     mem_sub:"Whether you're an individual practitioner, a company, or an academic institution — there's a membership for you.",
-    mt1:"Individual", mp1:"Registration + RM 50/year annual fee",
+    mt1:"Individual", mp1:"/ year",
     mi1_1:"Access to member directory", mi1_2:"Invitation to all MAMA events",
     mi1_3:"eRoses newsletter subscription", mi1_4:"Networking &amp; collaboration opportunities", mi1_5:"Digital membership certificate",
-    mt2:"Corporate / Organisation", mp2:"Registration + RM 100/year annual fee",
+    mt2:"Corporate / Organisation", mp2:"/ year",
     mi2_1:"All Individual benefits", mi2_2:"Company profile in member directory",
     mi2_3:"Priority event sponsorship opportunities", mi2_4:"Business matching facilitation",
     mi2_5:"Logo on MAMA website", mi2_6:"Voting rights at AGM",
-    mt3:"Institution / University", mp3:"Registration + RM 50/year annual fee",
+    mt3:"Academic &amp; Student", mp3:"/ year", mp3_sub:"Institution / yr", mp4_sub:"Active Student",
     mi3_1:"University, college or polytechnic", mi3_2:"Research collaboration network",
     mi3_3:"Co-host educational webinars", mi3_4:"Student chapter support", mi3_5:"Industry-academia linkage",
     mem_reg_btn:"Register Now",
     reg_tag:"Online Registration", reg_title:"Become a MAMA Member",
     reg_sub:"Fill in the form below. Our Secretariat will contact you within 3 working days with payment instructions.",
     toggle_ind:"👤 Individual / Academic", toggle_corp:"🏢 Corporate / Organisation", toggle_stu:"🎓 Student (FOC)",
-    fee_label:"Individual Membership Fee:", fee_ind_text:"RM 50 (one-time registration) + RM 50/year (annual subscription). Payment details will be sent to your email after submission.",
-    fee_corp_label:"Corporate Membership Fee:", fee_corp_text:"RM 50 (one-time registration) + RM 100/year (annual subscription). Payment details will be sent to your email after submission.",
+    fee_label:"Individual Membership Fee:", fee_ind_text:"RM 50/year. Payment details will be sent to your email after submission.",
+    fee_corp_label:"Corporate Membership Fee:", fee_corp_text:"RM 200/year. Payment details will be sent to your email after submission.",
     fee_stu_label:"Student Academic Membership:", fee_stu_text:"FREE (FOC) — Open to active students at registered Malaysian universities, colleges, or polytechnics. Lecturer verification required.",
     mt4:"Student Academic", mp4_price:"FREE", mp4:"Free Membership for Active Students",
     mi4_1:"University / college / polytechnic student", mi4_2:"Institutional email &amp; Student ID required",
@@ -1278,22 +1277,22 @@ const T = {
     m11:"鼓励 AM 领域的研究与创新", m12:"保持协会财务的可持续性",
     mem_tag:"会员", mem_title:"加入 MAMA 社区",
     mem_sub:"无论您是个人从业者、企业还是学术机构——都有适合您的会员类别。",
-    mt1:"个人", mp1:"注册费 + RM 50/年 年费",
+    mt1:"个人", mp1:"/ 年",
     mi1_1:"访问会员目录", mi1_2:"受邀参加所有 MAMA 活动",
     mi1_3:"订阅 eRoses 电子通讯", mi1_4:"网络交流与合作机会", mi1_5:"数字会员证书",
-    mt2:"企业 / 组织", mp2:"注册费 + RM 100/年 年费",
+    mt2:"企业 / 组织", mp2:"/ 年",
     mi2_1:"包含所有个人会员权益", mi2_2:"公司简介列入会员目录",
     mi2_3:"优先活动赞助机会", mi2_4:"商业配对便利",
     mi2_5:"企业标志展示于 MAMA 网站", mi2_6:"AGM 投票权",
-    mt3:"机构 / 大学", mp3:"注册费 + RM 50/年 年费",
+    mt3:"学术 &amp; 学生", mp3:"/ 年", mp3_sub:"机构 / 年", mp4_sub:"在读学生",
     mi3_1:"大学、学院或理工学院", mi3_2:"研究合作网络",
     mi3_3:"共同举办教育网络研讨会", mi3_4:"学生分会支持", mi3_5:"产学合作联结",
     mem_reg_btn:"立即注册",
     reg_tag:"在线注册", reg_title:"成为 MAMA 会员",
     reg_sub:"请填写以下表格。我们的秘书处将在 3 个工作日内与您联系，提供付款说明。",
     toggle_ind:"👤 个人 / 学术", toggle_corp:"🏢 企业 / 组织", toggle_stu:"🎓 学生（免费）",
-    fee_label:"个人会员费：", fee_ind_text:"RM 50（一次性注册费）+ RM 50/年（年费）。提交后付款详情将发送到您的电子邮件。",
-    fee_corp_label:"企业会员费：", fee_corp_text:"RM 50（一次性注册费）+ RM 100/年（年费）。提交后付款详情将发送到您的电子邮件。",
+    fee_label:"个人会员费：", fee_ind_text:"RM 50/年。提交后付款详情将发送到您的电子邮件。",
+    fee_corp_label:"企业会员费：", fee_corp_text:"RM 200/年。提交后付款详情将发送到您的电子邮件。",
     fee_stu_label:"学生学术会员：", fee_stu_text:"免费（FOC）— 开放给马来西亚注册大学、学院或理工学院的在读学生。需要讲师验证。",
     mt4:"学生学术", mp4_price:"免费", mp4:"在读学生免费会员",
     mi4_1:"大学 / 学院 / 理工学院学生", mi4_2:"需要院校电邮及学生证",
@@ -1474,7 +1473,7 @@ async function submitForm(e) {
   submitBtn.disabled = true;
 
   // Calculate amount based on member type (Registration + First Year)
-  currentAmount = memberType === 'corporate' ? 150 : memberType === 'student' ? 0 : 100;
+  currentAmount = memberType === 'corporate' ? 200 : memberType === 'student' ? 0 : 50;
 
   // Generate ID on frontend so we don't need to wait for .select() (which is blocked by RLS)
   const submissionId = crypto.randomUUID();
