@@ -197,7 +197,7 @@
 
     /* ── MEMBERSHIP ── */
     #membership { background: #fff; }
-    .mem-cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 26px; margin-bottom: 0; }
+    .mem-cards { display: grid; grid-template-columns: repeat(auto-fill,minmax(210px,1fr)); gap: 22px; margin-bottom: 0; }
     .mem-card {
       border-radius: 16px; padding: 30px 26px; text-align: center;
       box-shadow: var(--shadow); border: 2px solid transparent;
@@ -223,6 +223,17 @@
     .mem-card .btn-mem:hover { background: var(--blue); color: #fff; }
     .mem-card.featured .btn-mem { background: var(--accent); color: #fff; }
     .mem-card.featured .btn-mem:hover { background: #e55a25; }
+
+    input[type=file] {
+      border: 2px dashed #c8d8ee; background: #f5f9ff; padding: 10px 12px;
+      border-radius: 8px; cursor: pointer; font-size: 0.83rem; color: #555;
+    }
+    .stu-section-label {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.6px; color: var(--accent); border-bottom: 1px solid #eee;
+      padding-bottom: 6px; margin: 4px 0 16px;
+    }
+    .email-hint { font-size: 0.76rem; color: var(--accent); margin-top: 4px; display:none; }
 
     /* ── REGISTER ── */
     #register { background: var(--grey-lt); }
@@ -558,6 +569,20 @@
         </ul>
         <a href="#register" class="btn-mem" data-i18n="mem_reg_btn">Daftar Sekarang</a>
       </div>
+      <div class="mem-card" style="border:2px solid #27ae60;">
+        <div class="mem-icon">🎓</div>
+        <div class="mem-type" data-i18n="mt4" style="color:#27ae60;">Pelajar Akademik</div>
+        <div class="mem-price" style="color:#27ae60;" data-i18n="mp4_price">PERCUMA</div>
+        <div class="mem-price-sub" data-i18n="mp4">Keahlian Percuma untuk Pelajar Aktif</div>
+        <ul>
+          <li data-i18n="mi4_1">Pelajar universiti / kolej / politeknik</li>
+          <li data-i18n="mi4_2">Perlu emel institusi &amp; ID Pelajar</li>
+          <li data-i18n="mi4_3">Pengesahan pensyarah diperlukan</li>
+          <li data-i18n="mi4_4">Akses ke acara &amp; webinar MAMA</li>
+          <li data-i18n="mi4_5">Sijil keahlian pelajar digital</li>
+        </ul>
+        <a href="#register" class="btn-mem" data-i18n="mem_reg_btn" style="background:#e6f9ee;color:#27ae60;">Daftar Sekarang</a>
+      </div>
     </div>
   </div>
 </section>
@@ -574,6 +599,7 @@
       <div class="form-type-toggle">
         <div class="toggle-btn active" onclick="setType('individual',this)" data-i18n="toggle_ind">👤 Individu / Akademik</div>
         <div class="toggle-btn" onclick="setType('corporate',this)" data-i18n="toggle_corp">🏢 Korporat / Organisasi</div>
+        <div class="toggle-btn" onclick="setType('student',this)" data-i18n="toggle_stu" style="color:#27ae60;border-color:#27ae60;">🎓 Pelajar (FOC)</div>
       </div>
       <div class="fee-note" id="feeNote">
         <strong data-i18n="fee_label">Yuran Keahlian Individu:</strong>
@@ -594,10 +620,51 @@
             <input type="text" id="icnum" placeholder="cth. 900101-01-1234" required />
           </div>
         </div>
+        <!-- STUDENT GROUP (hidden by default) -->
+        <div id="studentGroup" style="display:none;">
+          <div class="stu-section-label" data-i18n="stu_section_info">Maklumat Pelajar</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n="stu_institution">Nama Universiti / Institusi <span class="required">*</span></label>
+              <input type="text" id="stuInstitution" data-i18n-ph="stu_institution_ph" placeholder="cth. Universiti Teknologi Malaysia" />
+            </div>
+            <div class="form-group">
+              <label data-i18n="stu_course">Kursus / Program <span class="required">*</span></label>
+              <input type="text" id="stuCourse" data-i18n-ph="stu_course_ph" placeholder="cth. Kejuruteraan Mekanikal" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n="stu_matric">No. Matrik / ID Pelajar <span class="required">*</span></label>
+              <input type="text" id="stuMatric" placeholder="cth. A21EC0001" />
+            </div>
+            <div class="form-group">
+              <label data-i18n="stu_id_upload">Muat Naik Kad ID Pelajar <span class="required">*</span></label>
+              <input type="file" id="stuIdFile" accept="image/*,.pdf" style="width:100%;" />
+            </div>
+          </div>
+          <div class="stu-section-label" data-i18n="stu_section_lec">Maklumat Pensyarah / Penyelia</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n="lec_name">Nama Pensyarah <span class="required">*</span></label>
+              <input type="text" id="lecName" data-i18n-ph="lec_name_ph" placeholder="Nama penuh pensyarah" />
+            </div>
+            <div class="form-group">
+              <label data-i18n="lec_email">Emel Pensyarah <span class="required">*</span></label>
+              <input type="email" id="lecEmail" data-i18n-ph="lec_email_ph" placeholder="pensyarah@utm.my" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n="lec_letter">Muat Naik Surat / Pengesahan Pensyarah <span style="color:#888;font-weight:400;" data-i18n="optional_label">(pilihan)</span></label>
+            <input type="file" id="lecFile" accept="image/*,.pdf" style="width:100%;" />
+          </div>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label data-i18n="f_email">Emel <span class="required">*</span></label>
             <input type="email" id="email" data-i18n-ph="f_email_ph" placeholder="emel@anda.com" required />
+            <div class="email-hint" id="emailHint" data-i18n="stu_email_hint">⚠️ Gunakan emel institusi anda (cth. nama@utm.my)</div>
           </div>
           <div class="form-group">
             <label data-i18n="f_phone">No. Telefon <span class="required">*</span></label>
@@ -930,7 +997,7 @@ const T = {
     nav_committee: "Jawatankuasa", nav_contact: "Hubungi", nav_join: "Sertai MAMA",
     hero_tag: "🏭 Badan Percetakan 3D Kebangsaan",
     hero_h1: 'Rumah Malaysia untuk <span>Percetakan 3D</span> &amp; Pembuatan Aditif',
-    hero_p: "MAMA menyatukan pengilang, pendidik, badan kerajaan, dan inovator untuk membangun ekosistem Pembuatan Aditif Malaysia — dari Perlis hingga Sabah.",
+    hero_p: "MAMA menyatukan pengilang, pendidik, badan kerajaan, dan inovator untuk membangun ekosistem Pembuatan Aditif Malaysia — merentasi 13 negeri &amp; 3 Wilayah Persekutuan.",
     hero_btn1: "Daftar Sebagai Ahli", hero_btn2: "Ketahui Lebih Lanjut",
     stat1: "Ditubuhkan &amp; Didaftar ROS", stat2: "Negeri Diwakili",
     stat3: "Kategori Keahlian", stat4: "Digital-First 2026",
@@ -965,10 +1032,22 @@ const T = {
     mem_reg_btn:"Daftar Sekarang",
     reg_tag:"Pendaftaran Dalam Talian", reg_title:"Jadi Ahli MAMA",
     reg_sub:"Isi borang di bawah. Urusetia kami akan menghubungi anda dalam masa 3 hari bekerja dengan maklumat pembayaran.",
-    toggle_ind:"👤 Individu / Akademik", toggle_corp:"🏢 Korporat / Organisasi",
+    toggle_ind:"👤 Individu / Akademik", toggle_corp:"🏢 Korporat / Organisasi", toggle_stu:"🎓 Pelajar (FOC)",
     fee_label:"Yuran Keahlian Individu:", fee_ind_text:"RM 50 (pendaftaran satu kali) + RM 50/tahun (yuran tahunan). Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.",
     fee_corp_text:"RM 50 (pendaftaran satu kali) + RM 100/tahun (yuran tahunan). Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.",
     fee_corp_label:"Yuran Keahlian Korporat:",
+    fee_stu_label:"Keahlian Pelajar Akademik:", fee_stu_text:"PERCUMA (FOC) — Terbuka untuk pelajar aktif di universiti, kolej, atau politeknik berdaftar di Malaysia. Pengesahan pensyarah diperlukan.",
+    mt4:"Pelajar Akademik", mp4_price:"PERCUMA", mp4:"Keahlian Percuma untuk Pelajar Aktif",
+    mi4_1:"Pelajar universiti / kolej / politeknik", mi4_2:"Perlu emel institusi &amp; ID Pelajar",
+    mi4_3:"Pengesahan pensyarah diperlukan", mi4_4:"Akses ke acara &amp; webinar MAMA", mi4_5:"Sijil keahlian pelajar digital",
+    stu_section_info:"Maklumat Pelajar", stu_section_lec:"Maklumat Pensyarah / Penyelia",
+    stu_institution:"Nama Universiti / Institusi", stu_institution_ph:"cth. Universiti Teknologi Malaysia",
+    stu_course:"Kursus / Program", stu_course_ph:"cth. Kejuruteraan Mekanikal",
+    stu_matric:"No. Matrik / ID Pelajar", stu_id_upload:"Muat Naik Kad ID Pelajar",
+    lec_name:"Nama Pensyarah", lec_name_ph:"Nama penuh pensyarah",
+    lec_email:"Emel Pensyarah", lec_email_ph:"pensyarah@utm.my",
+    lec_letter:"Muat Naik Surat / Pengesahan Pensyarah", optional_label:"(pilihan)",
+    stu_email_hint:"⚠️ Gunakan emel institusi anda (cth. nama@utm.my)",
     f_name:"Nama Penuh", f_name_ph:"Seperti dalam IC / Pasport",
     f_org:"Nama Organisasi", f_org_ph:"Nama syarikat / institusi",
     f_ic:"No. IC / Pasport",
@@ -1042,7 +1121,7 @@ const T = {
     nav_committee:"Committee", nav_contact:"Contact", nav_join:"Join MAMA",
     hero_tag:"🏭 National Additive Manufacturing Body",
     hero_h1:'Malaysia\'s Home for <span>3D Printing</span> &amp; Additive Manufacturing',
-    hero_p:"MAMA unites manufacturers, educators, government bodies, and innovators to develop Malaysia's Additive Manufacturing ecosystem — from Perlis to Sabah.",
+    hero_p:"MAMA unites manufacturers, educators, government bodies, and innovators to develop Malaysia's Additive Manufacturing ecosystem — across all 13 states &amp; 3 Federal Territories.",
     hero_btn1:"Join as Member", hero_btn2:"Learn More",
     stat1:"Founded &amp; ROS Registered", stat2:"States Represented",
     stat3:"Membership Categories", stat4:"Digital-First 2026",
@@ -1077,9 +1156,21 @@ const T = {
     mem_reg_btn:"Register Now",
     reg_tag:"Online Registration", reg_title:"Become a MAMA Member",
     reg_sub:"Fill in the form below. Our Secretariat will contact you within 3 working days with payment instructions.",
-    toggle_ind:"👤 Individual / Academic", toggle_corp:"🏢 Corporate / Organisation",
+    toggle_ind:"👤 Individual / Academic", toggle_corp:"🏢 Corporate / Organisation", toggle_stu:"🎓 Student (FOC)",
     fee_label:"Individual Membership Fee:", fee_ind_text:"RM 50 (one-time registration) + RM 50/year (annual subscription). Payment details will be sent to your email after submission.",
     fee_corp_label:"Corporate Membership Fee:", fee_corp_text:"RM 50 (one-time registration) + RM 100/year (annual subscription). Payment details will be sent to your email after submission.",
+    fee_stu_label:"Student Academic Membership:", fee_stu_text:"FREE (FOC) — Open to active students at registered Malaysian universities, colleges, or polytechnics. Lecturer verification required.",
+    mt4:"Student Academic", mp4_price:"FREE", mp4:"Free Membership for Active Students",
+    mi4_1:"University / college / polytechnic student", mi4_2:"Institutional email &amp; Student ID required",
+    mi4_3:"Lecturer verification required", mi4_4:"Access to MAMA events &amp; webinars", mi4_5:"Digital student membership certificate",
+    stu_section_info:"Student Information", stu_section_lec:"Lecturer / Supervisor Details",
+    stu_institution:"University / Institution Name", stu_institution_ph:"e.g. Universiti Teknologi Malaysia",
+    stu_course:"Course / Programme", stu_course_ph:"e.g. Mechanical Engineering",
+    stu_matric:"Matric No. / Student ID", stu_id_upload:"Upload Student ID Card",
+    lec_name:"Lecturer Name", lec_name_ph:"Lecturer's full name",
+    lec_email:"Lecturer Email", lec_email_ph:"lecturer@utm.my",
+    lec_letter:"Upload Lecturer Endorsement Letter", optional_label:"(optional)",
+    stu_email_hint:"⚠️ Please use your institutional email (e.g. name@utm.my)",
     f_name:"Full Name", f_name_ph:"As per IC / Passport",
     f_org:"Organisation Name", f_org_ph:"Company / Institution name",
     f_ic:"IC / Passport No.",
@@ -1153,7 +1244,7 @@ const T = {
     nav_committee:"委员会", nav_contact:"联系", nav_join:"加入 MAMA",
     hero_tag:"🏭 国家增材制造协会",
     hero_h1:'马来西亚<span>3D 打印</span>与增材制造的家',
-    hero_p:"MAMA 汇聚制造商、教育工作者、政府机构及创新者，共同建设马来西亚增材制造生态系统——从玻璃市到沙巴。",
+    hero_p:"MAMA 汇聚制造商、教育工作者、政府机构及创新者，共同建设马来西亚增材制造生态系统——覆盖全国13个州属及3个联邦直辖区。",
     hero_btn1:"注册成为会员", hero_btn2:"了解更多",
     stat1:"成立并注册 ROS", stat2:"代表州属",
     stat3:"会员类别", stat4:"2026 年全面数字化",
@@ -1188,9 +1279,21 @@ const T = {
     mem_reg_btn:"立即注册",
     reg_tag:"在线注册", reg_title:"成为 MAMA 会员",
     reg_sub:"请填写以下表格。我们的秘书处将在 3 个工作日内与您联系，提供付款说明。",
-    toggle_ind:"👤 个人 / 学术", toggle_corp:"🏢 企业 / 组织",
+    toggle_ind:"👤 个人 / 学术", toggle_corp:"🏢 企业 / 组织", toggle_stu:"🎓 学生（免费）",
     fee_label:"个人会员费：", fee_ind_text:"RM 50（一次性注册费）+ RM 50/年（年费）。提交后付款详情将发送到您的电子邮件。",
     fee_corp_label:"企业会员费：", fee_corp_text:"RM 50（一次性注册费）+ RM 100/年（年费）。提交后付款详情将发送到您的电子邮件。",
+    fee_stu_label:"学生学术会员：", fee_stu_text:"免费（FOC）— 开放给马来西亚注册大学、学院或理工学院的在读学生。需要讲师验证。",
+    mt4:"学生学术", mp4_price:"免费", mp4:"在读学生免费会员",
+    mi4_1:"大学 / 学院 / 理工学院学生", mi4_2:"需要院校电邮及学生证",
+    mi4_3:"需要讲师认证", mi4_4:"参加 MAMA 活动与网络研讨会", mi4_5:"数字学生会员证书",
+    stu_section_info:"学生信息", stu_section_lec:"讲师 / 导师信息",
+    stu_institution:"大学 / 院校名称", stu_institution_ph:"例：马来西亚理工大学",
+    stu_course:"课程 / 专业", stu_course_ph:"例：机械工程",
+    stu_matric:"学号 / 学生证号", stu_id_upload:"上传学生证",
+    lec_name:"讲师姓名", lec_name_ph:"讲师全名",
+    lec_email:"讲师电邮", lec_email_ph:"lecturer@utm.my",
+    lec_letter:"上传讲师推荐信", optional_label:"（可选）",
+    stu_email_hint:"⚠️ 请使用院校电邮（例：name@utm.my）",
     f_name:"全名", f_name_ph:"与身份证 / 护照一致",
     f_org:"组织名称", f_org_ph:"公司 / 机构名称",
     f_ic:"身份证 / 护照号码",
@@ -1289,8 +1392,16 @@ function updateFeeNote() {
   const note = document.getElementById('feeNote');
   if (memberType === 'corporate') {
     note.innerHTML = '<strong>' + t.fee_corp_label + '</strong> ' + t.fee_corp_text;
+  } else if (memberType === 'student') {
+    note.innerHTML = '<strong>' + t.fee_stu_label + '</strong> ' + t.fee_stu_text;
+    note.style.background = '#e6f9ee';
+    note.style.borderColor = '#27ae60';
+    note.style.color = '#1a7a40';
   } else {
     note.innerHTML = '<strong>' + t.fee_label + '</strong> ' + t.fee_ind_text;
+    note.style.background = '';
+    note.style.borderColor = '';
+    note.style.color = '';
   }
 }
 
@@ -1299,13 +1410,36 @@ function setType(type, el) {
   document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
   el.classList.add('active');
   const icInput = document.getElementById('icnum');
+  const stuGroup = document.getElementById('studentGroup');
+  const emailHint = document.getElementById('emailHint');
+
+  // reset all
+  document.getElementById('orgGroup').style.display = 'none';
+  document.getElementById('icGroup').style.display = 'none';
+  stuGroup.style.display = 'none';
+  emailHint.style.display = 'none';
+  icInput.required = false;
+  icInput.disabled = true;
+
+  // set required on student fields to false before toggling
+  ['stuInstitution','stuCourse','stuMatric','stuIdFile','lecName','lecEmail'].forEach(id => {
+    const el2 = document.getElementById(id);
+    if (el2) { el2.required = false; el2.disabled = true; }
+  });
+
   if (type === 'corporate') {
     document.getElementById('orgGroup').style.display = '';
-    document.getElementById('icGroup').style.display = 'none';
-    icInput.required = false;
-    icInput.disabled = true;
+  } else if (type === 'student') {
+    stuGroup.style.display = '';
+    emailHint.style.display = 'block';
+    ['stuInstitution','stuCourse','stuMatric','stuIdFile','lecName','lecEmail'].forEach(id => {
+      const el2 = document.getElementById(id);
+      if (el2) { el2.required = (id !== 'lecEmail'); el2.disabled = false; }
+    });
+    // lecEmail not strictly required but encouraged
+    document.getElementById('lecEmail').required = true;
+    document.getElementById('lecEmail').disabled = false;
   } else {
-    document.getElementById('orgGroup').style.display = 'none';
     document.getElementById('icGroup').style.display = '';
     icInput.required = true;
     icInput.disabled = false;
@@ -1328,24 +1462,60 @@ async function submitForm(e) {
   submitBtn.disabled = true;
 
   // Calculate amount based on member type (Registration + First Year)
-  currentAmount = memberType === 'corporate' ? 150 : 100;
+  currentAmount = memberType === 'corporate' ? 150 : memberType === 'student' ? 0 : 100;
 
   // Generate ID on frontend so we don't need to wait for .select() (which is blocked by RLS)
   const submissionId = crypto.randomUUID();
+
+  // Handle student file uploads
+  let stuIdUrl = null, lecFileUrl = null;
+  if (memberType === 'student') {
+    const stuIdFile = document.getElementById('stuIdFile').files[0];
+    const lecFile = document.getElementById('lecFile').files[0];
+    if (stuIdFile) {
+      const ext = stuIdFile.name.split('.').pop();
+      const { data: ud } = await sb.storage.from('student-docs')
+        .upload(`${submissionId}/student-id.${ext}`, stuIdFile, { contentType: stuIdFile.type, upsert: true });
+      if (ud) stuIdUrl = sb.storage.from('student-docs').getPublicUrl(ud.path).data.publicUrl;
+    }
+    if (lecFile) {
+      const ext = lecFile.name.split('.').pop();
+      const { data: ud } = await sb.storage.from('student-docs')
+        .upload(`${submissionId}/lecturer-letter.${ext}`, lecFile, { contentType: lecFile.type, upsert: true });
+      if (ud) lecFileUrl = sb.storage.from('student-docs').getPublicUrl(ud.path).data.publicUrl;
+    }
+  }
+
+  // Build intro / extra info for student
+  let introValue = document.getElementById('intro').value || null;
+  if (memberType === 'student') {
+    const stuLines = [
+      'Course: ' + (document.getElementById('stuCourse').value || ''),
+      'Lecturer: ' + (document.getElementById('lecName').value || ''),
+      'Lecturer Email: ' + (document.getElementById('lecEmail').value || ''),
+      stuIdUrl  ? 'Student ID File: ' + stuIdUrl  : 'Student ID File: pending email',
+      lecFileUrl ? 'Lecturer Letter: ' + lecFileUrl : 'Lecturer Letter: pending email',
+    ];
+    introValue = stuLines.join(' | ');
+  }
 
   const data = {
     id: submissionId,
     member_type: memberType,
     full_name: document.getElementById('fullname').value || null,
-    org_name: document.getElementById('orgname').value || null,
-    ic_passport: document.getElementById('icnum').value || null,
+    org_name: memberType === 'student'
+      ? (document.getElementById('stuInstitution').value || null)
+      : (document.getElementById('orgname').value || null),
+    ic_passport: memberType === 'student'
+      ? (document.getElementById('stuMatric').value || null)
+      : (document.getElementById('icnum').value || null),
     email: document.getElementById('email').value || null,
     phone: document.getElementById('phone').value || null,
     state: document.getElementById('state').value || null,
-    industry: document.getElementById('industry').value || null,
+    industry: memberType === 'student' ? 'Pendidikan / Latihan' : (document.getElementById('industry').value || null),
     source: document.getElementById('source').value || null,
-    intro: document.getElementById('intro').value || null,
-    payment_status: 'pending',
+    intro: introValue,
+    payment_status: memberType === 'student' ? 'foc' : 'pending',
     application_status: 'new',
     payment_amount: currentAmount,
     lang: currentLang
