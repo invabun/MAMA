@@ -8,6 +8,9 @@ const T = {
     topbar_login: "Log Masuk Ahli 🔒",
     announce_text: "AMARAN VENDOR: Penipuan menyamar sebagai jabatan universiti menyasarkan vendor pencetakan 3D.",
     announce_link: "Baca amaran penuh →",
+    pop_badge: "⚠️ Amaran Risiko Vendor", pop_title: "Amaran Penipuan Vendor Pencetak 3D",
+    pop_body: "Para ahli diminta berwaspada. Penipu menyamar sebagai jabatan universiti untuk memperdaya vendor pencetakan 3D supaya menghantar barang sebelum pembayaran — melalui WhatsApp, “LO” PDF palsu, dan tekanan segera. Sentiasa sahkan pesanan dengan pejabat pembelian/kewangan rasmi sebelum penghantaran.",
+    pop_numbers_label: "Nombor dilaporkan:", pop_cta: "Baca amaran penuh →", pop_dismiss: "Tutup",
     logo_full: "Malaysia Additive Manufacturing Association",
     nav_about: "Tentang", nav_membership: "Keahlian", nav_events: "Aktiviti",
     nav_committee: "Jawatankuasa", nav_contact: "Hubungi", nav_join: "Sertai MAMA", nav_news: "Berita",
@@ -132,6 +135,9 @@ const T = {
     topbar_login:"Member Login 🔒",
     announce_text:"VENDOR ALERT: A procurement impersonation scam is targeting 3D printing vendors.",
     announce_link:"Read the full advisory →",
+    pop_badge:"⚠️ Vendor Risk Alert", pop_title:"3D Printer Vendor Scam Alert",
+    pop_body:"Members, please be alert. A scammer is impersonating a university department to trick 3D-printing vendors into delivering goods before payment — via WhatsApp, a fake PDF “LO”, and urgent pressure. Always verify orders with the official procurement/finance office before delivery.",
+    pop_numbers_label:"Reported numbers:", pop_cta:"Read the full advisory →", pop_dismiss:"Close",
     logo_full:"Malaysia Additive Manufacturing Association",
     nav_about:"About", nav_membership:"Membership", nav_events:"Events",
     nav_committee:"Committee", nav_contact:"Contact", nav_join:"Join MAMA", nav_news:"News",
@@ -255,6 +261,9 @@ const T = {
     topbar_login:"会员登录 🔒",
     announce_text:"供应商警示：冒充大学采购部门的骗局正针对 3D 打印供应商。",
     announce_link:"阅读完整警示 →",
+    pop_badge:"⚠️ 供应商风险警示", pop_title:"3D 打印机供应商骗局警示",
+    pop_body:"请各会员提高警惕。有骗子冒充大学部门，诱骗 3D 打印供应商在付款前先交货——手法包括 WhatsApp 联系、伪造的 PDF“采购函”及紧急施压。交货前请务必向官方采购／财务部门核实订单。",
+    pop_numbers_label:"举报的号码：", pop_cta:"阅读完整警示 →", pop_dismiss:"关闭",
     logo_full:"马来西亚增材制造协会",
     nav_about:"关于", nav_membership:"会员", nav_events:"活动",
     nav_committee:"委员会", nav_contact:"联系", nav_join:"加入 MAMA", nav_news:"新闻",
@@ -579,5 +588,22 @@ window.addEventListener('scroll', () => {
   });
 });
 
+/* ── Vendor alert modal (home page only) ── */
+function closeVendorAlert() {
+  const m = document.getElementById('vendorModal');
+  if (m) m.style.display = 'none';
+  try { sessionStorage.setItem('mama_va_dismissed', '1'); } catch (e) {}
+}
+function maybeShowVendorAlert() {
+  const m = document.getElementById('vendorModal');
+  if (!m) return;                                   // only present on the home page
+  let dismissed = false;
+  try { dismissed = sessionStorage.getItem('mama_va_dismissed') === '1'; } catch (e) {}
+  if (dismissed) return;                            // already closed this session
+  setTimeout(() => { m.style.display = 'flex'; }, 700);
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeVendorAlert(); });
+
 // Init
 applyTranslations();
+maybeShowVendorAlert();

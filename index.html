@@ -476,6 +476,25 @@
 
 
 
+<!-- VENDOR ALERT POP-UP (home only) -->
+<div id="vendorModal" class="modal-overlay" onclick="if(event.target===this)closeVendorAlert()">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="vmTitle">
+    <button class="modal-x" onclick="closeVendorAlert()" aria-label="Close">&times;</button>
+    <div class="vm-badge" data-i18n="pop_badge">⚠️ Amaran Risiko Vendor</div>
+    <h3 id="vmTitle" data-i18n="pop_title">Amaran Penipuan Vendor Pencetak 3D</h3>
+    <p class="vm-body" data-i18n="pop_body">Para ahli diminta berwaspada. Penipu menyamar sebagai jabatan universiti untuk memperdaya vendor pencetakan 3D supaya menghantar barang sebelum pembayaran — melalui WhatsApp, “LO” PDF palsu, dan tekanan segera. Sentiasa sahkan pesanan dengan pejabat pembelian/kewangan rasmi sebelum penghantaran.</p>
+    <div class="vm-numbers">
+      <span class="vm-num-label" data-i18n="pop_numbers_label">Nombor dilaporkan:</span>
+      <span class="vm-num">+60 14-215 2071</span>
+      <span class="vm-num">+60 10-540 7371</span>
+    </div>
+    <div class="vm-actions">
+      <a href="news.html" class="vm-cta" data-i18n="pop_cta">Baca amaran penuh →</a>
+      <button class="vm-dismiss" onclick="closeVendorAlert()" data-i18n="pop_dismiss">Tutup</button>
+    </div>
+  </div>
+</div>
+
 <script src="mama.js"></script>
 </body>
 </html>
