@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftar Keahlian — MAMA | Malaysia Additive Manufacturing Association</title>
+  <meta name="description" content="Daftar sebagai ahli MAMA (Persatuan Percetakan 3D Malaysia) — keahlian Individu, Korporat, Akademik & Pelajar (FOC). Borang pendaftaran dalam talian." />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <link rel="stylesheet" href="mama.css" />
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <span class="topbar-left">🇲🇾 &nbsp;<span data-i18n="topbar_reg">Persatuan Percetakan 3D Malaysia</span> &nbsp;|&nbsp; PPM-001-10-17052021</span>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span>
+      <a href="mailto:secretary@mama.org.my">secretary@mama.org.my</a>
+      <a href="member.html" data-i18n="topbar_login" style="margin-left:12px; font-weight:700; color:#FFb899; text-decoration:underline;">Log Masuk Ahli 🔒</a>
+    </span>
+    <!-- LANGUAGE SWITCHER -->
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('ms')">BM</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-badge">
+        <img src="mama_logo.png" alt="MAMA Logo" onerror="this.src='mama_logo.jpg'" />
+      </div>
+      <div class="logo-text">
+        <div class="abbr">MAMA</div>
+        <div class="full" data-i18n="logo_full">Malaysia Additive Manufacturing Association</div>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about" data-i18n="nav_about">Tentang</a></li>
+      <li><a href="index.html#membership" data-i18n="nav_membership">Keahlian</a></li>
+      <li><a href="index.html#events" data-i18n="nav_events">Aktiviti</a></li>
+      <li><a href="news.html" data-i18n="nav_news">Berita</a></li>
+      <li><a href="index.html#committee" data-i18n="nav_committee">Jawatankuasa</a></li>
+      <li><a href="index.html#contact" data-i18n="nav_contact">Hubungi</a></li>
+      <li><a href="register.html" class="nav-cta" data-i18n="nav_join">Sertai MAMA</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- SUB-PAGE HERO -->
+<div class="subpage-hero">
+  <div class="sp-inner">
+    <div class="crumb"><a href="index.html">MAMA</a> &nbsp;/&nbsp; <span data-i18n="reg_title">Jadi Ahli MAMA</span></div>
+    <div class="sp-tag" data-i18n="reg_tag">Pendaftaran Dalam Talian</div>
+    <h1 data-i18n="reg_title">Jadi Ahli MAMA</h1>
+    <p data-i18n="reg_sub">Isi borang di bawah. Urusetia kami akan menghubungi anda dalam masa 3 hari bekerja dengan maklumat pembayaran.</p>
+  </div>
+</div>
+
+<!-- REGISTER FORM -->
+<section id="register">
+  <div class="section-inner">
+    <div class="form-wrap">
+      <div class="form-type-toggle">
+        <div class="toggle-btn active" onclick="setType('individual',this)" data-i18n="toggle_ind">👤 Individu / Akademik</div>
+        <div class="toggle-btn" onclick="setType('corporate',this)" data-i18n="toggle_corp">🏢 Korporat / Organisasi</div>
+        <div class="toggle-btn" onclick="setType('student',this)" data-i18n="toggle_stu" style="color:#27ae60;border-color:#27ae60;">🎓 Pelajar (FOC)</div>
+      </div>
+      <div class="fee-note" id="feeNote">
+        <strong data-i18n="fee_label">Yuran Keahlian Individu:</strong>
+        <span data-i18n="fee_ind_text">RM 50 (pendaftaran satu kali) + RM 50/tahun (yuran tahunan). Maklumat pembayaran akan dihantar ke emel anda selepas penghantaran.</span>
+      </div>
+      <form id="regForm" onsubmit="submitForm(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="f_name">Nama Penuh <span class="required">*</span></label>
+            <input type="text" id="fullname" data-i18n-ph="f_name_ph" placeholder="Seperti dalam IC / Pasport" required />
+          </div>
+          <div class="form-group" id="orgGroup" style="display:none;">
+            <label data-i18n="f_org">Nama Organisasi <span class="required">*</span></label>
+            <input type="text" id="orgname" data-i18n-ph="f_org_ph" placeholder="Nama syarikat / institusi" />
+          </div>
+          <div class="form-group" id="icGroup">
+            <label data-i18n="f_ic">No. IC / Pasport <span class="required">*</span></label>
+            <input type="text" id="icnum" placeholder="cth. 900101-01-1234" required />
+          </div>
+        </div>
+        <!-- STUDENT GROUP (hidden by default) -->
+        <div id="studentGroup" style="display:none;">
+          <div class="stu-section-label" data-i18n="stu_section_info">Maklumat Pelajar</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n="stu_institution">Nama Universiti / Institusi <span class="required">*</span></label>
+              <input type="text" id="stuInstitution" data-i18n-ph="stu_institution_ph" placeholder="cth. Universiti Teknologi Malaysia" />
+            </div>
+            <div class="form-group">
+              <label data-i18n="stu_course">Kursus / Program <span class="required">*</span></label>
+              <input type="text" id="stuCourse" data-i18n-ph="stu_course_ph" placeholder="cth. Kejuruteraan Mekanikal" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n="stu_matric">No. Matrik / ID Pelajar <span class="required">*</span></label>
+              <input type="text" id="stuMatric" placeholder="cth. A21EC0001" />
+            </div>
+            <div class="form-group">
+              <label data-i18n="stu_id_upload">Muat Naik Kad ID Pelajar <span class="required">*</span></label>
+              <input type="file" id="stuIdFile" accept="image/*,.pdf" style="width:100%;" />
+            </div>
+          </div>
+          <div class="stu-section-label" data-i18n="stu_section_lec">Maklumat Pensyarah / Penyelia</div>
+          <div class="form-row">
+            <div class="form-group">
+              <label data-i18n="lec_name">Nama Pensyarah <span class="required">*</span></label>
+              <input type="text" id="lecName" data-i18n-ph="lec_name_ph" placeholder="Nama penuh pensyarah" />
+            </div>
+            <div class="form-group">
+              <label data-i18n="lec_email">Emel Pensyarah <span class="required">*</span></label>
+              <input type="email" id="lecEmail" data-i18n-ph="lec_email_ph" placeholder="pensyarah@utm.my" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label data-i18n="lec_letter">Muat Naik Surat / Pengesahan Pensyarah <span style="color:#888;font-weight:400;" data-i18n="optional_label">(pilihan)</span></label>
+            <input type="file" id="lecFile" accept="image/*,.pdf" style="width:100%;" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="f_email">Emel <span class="required">*</span></label>
+            <input type="email" id="email" data-i18n-ph="f_email_ph" placeholder="emel@anda.com" required />
+            <div class="email-hint" id="emailHint" data-i18n="stu_email_hint">⚠️ Gunakan emel institusi anda (cth. nama@utm.my)</div>
+          </div>
+          <div class="form-group">
+            <label data-i18n="f_phone">No. Telefon <span class="required">*</span></label>
+            <input type="tel" id="phone" placeholder="+60 12-345 6789" required />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label data-i18n="f_state">Negeri <span class="required">*</span></label>
+            <select id="state" required>
+              <option value="" data-i18n="f_state_ph">— Pilih Negeri —</option>
+              <option>Johor</option><option>Kedah</option><option>Kelantan</option>
+              <option>Melaka</option><option>Negeri Sembilan</option><option>Pahang</option>
+              <option>Perak</option><option>Perlis</option><option>Pulau Pinang</option>
+              <option>Sabah</option><option>Sarawak</option><option>Selangor</option>
+              <option>Terengganu</option><option>W.P. Kuala Lumpur</option>
+              <option>W.P. Labuan</option><option>W.P. Putrajaya</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label data-i18n="f_industry">Industri / Bidang <span class="required">*</span></label>
+            <select id="industry" required>
+              <option value="" data-i18n="f_industry_ph">— Pilih —</option>
+              <option data-i18n="ind1">Biro Perkhidmatan Percetakan 3D</option>
+              <option data-i18n="ind2">Pembekal Peralatan / Mesin</option>
+              <option data-i18n="ind3">Pembekal Bahan / Filamen</option>
+              <option data-i18n="ind4">Rekabentuk Produk / Kejuruteraan</option>
+              <option data-i18n="ind5">Pendidikan / Latihan</option>
+              <option data-i18n="ind6">Perubatan / Penjagaan Kesihatan</option>
+              <option data-i18n="ind7">Aeroangkasa / Pertahanan</option>
+              <option data-i18n="ind8">Automotif</option>
+              <option data-i18n="ind9">Pembinaan / Senibina</option>
+              <option data-i18n="ind10">Produk Pengguna</option>
+              <option data-i18n="ind11">Penyelidikan &amp; Pembangunan</option>
+              <option data-i18n="ind12">Kerajaan / NGO</option>
+              <option data-i18n="ind13">Lain-lain</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label data-i18n="f_source">Bagaimana anda tahu tentang MAMA?</label>
+          <select id="source">
+            <option value="" data-i18n="f_source_ph">— Pilihan —</option>
+            <option>Facebook / Media Sosial</option>
+            <option>LinkedIn</option>
+            <option data-i18n="src_ref">Dirujuk oleh ahli</option>
+            <option data-i18n="src_event">Acara industri</option>
+            <option>Google Search</option>
+            <option>WhatsApp / Telegram</option>
+            <option data-i18n="src_other">Lain-lain</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label data-i18n="f_intro">Pengenalan Ringkas (pilihan)</label>
+          <textarea id="intro" data-i18n-ph="f_intro_ph" placeholder="Ceritakan tentang diri anda atau organisasi anda dan minat anda dalam Pembuatan Aditif..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" required style="width:auto;display:inline;margin-right:8px;" />
+            <span data-i18n="f_agree">Saya bersetuju dengan Undang-Undang Persatuan MAMA dan mengesahkan semua maklumat di atas adalah tepat.</span>
+            <span class="required">*</span>
+          </label>
+        </div>
+        <button type="submit" class="submit-btn" data-i18n="f_submit">Hantar Permohonan Keahlian →</button>
+        <div class="form-footer-note" data-i18n="f_note">Data anda adalah sulit dan hanya digunakan untuk tujuan keahlian MAMA.</div>
+      </form>
+      <div class="success-msg" id="successMsg" data-i18n="f_success">
+        ✅ Terima kasih! Permohonan anda telah diterima. Urusetia kami akan menghubungi anda dalam masa 3 hari bekerja dengan maklumat pembayaran dan butiran keahlian anda.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="mama_logo.png" alt="MAMA" style="width:60px;height:60px;border-radius:50%;margin-bottom:10px;display:block;" onerror="this.src='mama_logo.jpg'" />
+        <div class="abbr">MAMA</div>
+        <div class="tagline" data-i18n="footer_tagline">Malaysia Additive Manufacturing Association<br>Persatuan Percetakan 3D Malaysia<br><br>Menyatukan komuniti Percetakan 3D &amp; Pembuatan Aditif Malaysia sejak 2021.</div>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="fc1_h">Persatuan</h4>
+        <ul>
+          <li><a href="index.html#about" data-i18n="fc1_1">Tentang MAMA</a></li>
+          <li><a href="index.html#committee" data-i18n="fc1_2">Jawatankuasa</a></li>
+          <li><a href="index.html#about" data-i18n="fc1_3">Manifesto</a></li>
+          <li><a href="#" data-i18n="fc1_4">Undang-Undang</a></li>
+          <li><a href="#" data-i18n="fc1_5">Laporan Tahunan</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="fc2_h">Keahlian</h4>
+        <ul>
+          <li><a href="index.html#membership" data-i18n="fc2_1">Individu</a></li>
+          <li><a href="index.html#membership" data-i18n="fc2_2">Korporat</a></li>
+          <li><a href="index.html#membership" data-i18n="fc2_3">Akademik</a></li>
+          <li><a href="register.html" data-i18n="fc2_4">Daftar Sekarang</a></li>
+          <li><a href="#" data-i18n="fc2_5">Perbaharui Keahlian</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="fc3_h">Sumber</h4>
+        <ul>
+          <li><a href="index.html#events" data-i18n="fc3_1">Aktiviti 2026</a></li>
+          <li><a href="#" data-i18n="fc3_2">eRoses Newsletter</a></li>
+          <li><a href="news.html" data-i18n="fc3_3">Berita Industri</a></li>
+          <li><a href="#" data-i18n="fc3_4">Direktori Ahli</a></li>
+          <li><a href="index.html#contact" data-i18n="fc3_5">Hubungi</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr class="footer-divider" />
+    <div class="footer-bottom">
+      <span data-i18n="footer_copy">© 2026 Malaysia Additive Manufacturing Association. Hak cipta terpelihara.</span>
+      <span class="reg">Reg. No: PPM-001-10-17052021 &nbsp;|&nbsp; <span data-i18n="footer_ros">Berdaftar dengan ROS Malaysia</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="mama.js"></script>
+</body>
+</html>

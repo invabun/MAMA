@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Berita & Amaran — MAMA | 3D Printer Vendor Alert</title>
+  <meta name="description" content="Amaran rasmi MAMA: penipuan menyamar sebagai pihak pembelian universiti menyasarkan vendor pencetakan 3D. Sahkan semua pesanan sebelum penghantaran." />
+  <link rel="stylesheet" href="mama.css" />
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div id="topbar">
+  <span class="topbar-left">🇲🇾 &nbsp;<span data-i18n="topbar_reg">Persatuan Percetakan 3D Malaysia</span> &nbsp;|&nbsp; PPM-001-10-17052021</span>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span>
+      <a href="mailto:secretary@mama.org.my">secretary@mama.org.my</a>
+      <a href="register.html" data-i18n="topbar_join">Daftar Sekarang →</a>
+      <a href="member.html" data-i18n="topbar_login" style="margin-left:12px; font-weight:700; color:#FFb899; text-decoration:underline;">Log Masuk Ahli 🔒</a>
+    </span>
+    <!-- LANGUAGE SWITCHER -->
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('ms')">BM</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <span class="lang-sep">|</span>
+      <button class="lang-btn" onclick="setLang('zh')">中文</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-badge">
+        <img src="mama_logo.png" alt="MAMA Logo" onerror="this.src='mama_logo.jpg'" />
+      </div>
+      <div class="logo-text">
+        <div class="abbr">MAMA</div>
+        <div class="full" data-i18n="logo_full">Malaysia Additive Manufacturing Association</div>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html#about" data-i18n="nav_about">Tentang</a></li>
+      <li><a href="index.html#membership" data-i18n="nav_membership">Keahlian</a></li>
+      <li><a href="index.html#events" data-i18n="nav_events">Aktiviti</a></li>
+      <li><a href="news.html" class="active" data-i18n="nav_news">Berita</a></li>
+      <li><a href="index.html#committee" data-i18n="nav_committee">Jawatankuasa</a></li>
+      <li><a href="index.html#contact" data-i18n="nav_contact">Hubungi</a></li>
+      <li><a href="register.html" class="nav-cta" data-i18n="nav_join">Sertai MAMA</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- SUB-PAGE HERO -->
+<div class="subpage-hero alert">
+  <div class="sp-inner">
+    <div class="crumb"><a href="index.html">MAMA</a> &nbsp;/&nbsp; <span data-i18n="na_hero_title">Berita & Amaran</span></div>
+    <div class="sp-tag" data-i18n="na_hero_tag">Amaran Ahli · Berita Industri</div>
+    <h1 data-i18n="na_hero_title">Berita & Amaran</h1>
+    <p data-i18n="na_hero_sub">Notis rasmi dan kemas kini daripada Persatuan Pembuatan Aditif Malaysia (MAMA).</p>
+  </div>
+</div>
+
+<!-- NEWS -->
+<section id="news">
+  <div class="news-wrap">
+    <article class="alert-card">
+      <div class="ac-head">
+        <div class="ac-meta">
+          <span class="ac-badge" data-i18n="na_badge">Amaran Risiko Vendor</span>
+          <span class="ac-date" data-i18n="na_date">Dikeluarkan 9 Jun 2026 · Urusetia MAMA</span>
+        </div>
+        <h2 data-i18n="na_title">Amaran Vendor Pencetak 3D — Penipuan Menyamar sebagai Pihak Pembelian</h2>
+      </div>
+      <div class="ac-body">
+        <p class="ac-lead" data-i18n="na_lead">Para ahli diminta berwaspada. Satu percubaan penyamaran pembelian yang disyaki telah dilaporkan, melibatkan individu yang mendakwa mewakili sebuah jabatan universiti. MAMA telah menghubungi universiti tersebut secara terus, dan disahkan bahawa perkara itu tidak sah. Sila kongsikan amaran ini dengan pasukan anda.</p>
+
+        <h3 class="ac-h3" data-i18n="na_flow_h">🚩 Cara penipuan & tanda bahaya</h3>
+        <div class="step-grid">
+          <div class="step">
+            <div class="st-t" data-i18n="na_flow1_t">1 · Umpan awal</div>
+            <div class="st-d" data-i18n="na_flow1_d">Wakil universiti palsu menghubungi anda melalui WhatsApp atau nombor telefon peribadi.</div>
+          </div>
+          <div class="step">
+            <div class="st-t" data-i18n="na_flow2_t">2 · Perangkap item luar skop</div>
+            <div class="st-d" data-i18n="na_flow2_d">Mereka menambah item pihak ketiga di luar skop perniagaan anda dan memperkenalkan “pembekal” lain.</div>
+          </div>
+          <div class="step">
+            <div class="st-t" data-i18n="na_flow3_t">3 · LO palsu</div>
+            <div class="st-d" data-i18n="na_flow3_d">Anda menerima dokumen PDF yang direka kelihatan seperti Surat Pesanan (LO) rasmi.</div>
+          </div>
+        </div>
+        <p style="font-weight:700;color:#c0392b;margin:18px 0 4px;" data-i18n="na_flags_h">Tanda bahaya yang dilaporkan dalam kes ini</p>
+        <ul class="flag-list">
+          <li data-i18n="na_flag1">Komunikasi hanya melalui WhatsApp atau nombor telefon peribadi</li>
+          <li data-i18n="na_flag2">Dokumen PDF gaya “LO” dihantar sebagai ganti pesanan yang disahkan</li>
+          <li data-i18n="na_flag3">Tekanan untuk menghantar barang sebelum pembayaran disahkan</li>
+          <li data-i18n="na_flag4">Item pihak ketiga yang tiada kaitan ditambah, di luar skop perniagaan vendor</li>
+          <li data-i18n="na_flag5">Dakwaan palsu bahawa jabatan hanya boleh berurusan dengan satu vendor berdaftar</li>
+          <li data-i18n="na_flag6">Tekanan segera untuk meneruskan dengan cepat</li>
+        </ul>
+
+        <h3 class="ac-h3" data-i18n="na_shield_h">🛡️ Cara melindungi diri</h3>
+        <ul class="shield-list">
+          <li data-i18n="na_shield1"><strong>Sahkan sebelum penghantaran.</strong> Hubungi pejabat pembelian atau kewangan rasmi universiti secara terus untuk mengesahkan sebarang pesanan — guna maklumat hubungan dari laman web rasmi institusi, bukan nombor yang diberikan kepada anda.</li>
+          <li data-i18n="na_shield2"><strong>Peraturan emas dokumen.</strong> Jangan sekali-kali menghantar barang berdasarkan mesej WhatsApp, panggilan telefon, atau PDF “LO” semata-mata. Pesanan Belian (PO) rasmi yang disahkan adalah wajib.</li>
+        </ul>
+        <p style="font-weight:700;margin:16px 0 4px;" data-i18n="na_shield3">Nombor yang dilaporkan — berhati-hati dengan sebarang hubungan daripadanya dan sahkan secara bebas:</p>
+        <div class="num-chips">
+          <div class="num-chip">+60 14-215 2071<span data-i18n="na_num1_l">Mendakwa sebagai “wakil”</span></div>
+          <div class="num-chip">+60 10-540 7371<span data-i18n="na_num2_l">Mendakwa sebagai “pembekal”</span></div>
+        </div>
+
+        <h3 class="ac-h3" data-i18n="na_cmp_h">Proses rasmi vs. amaran penipuan</h3>
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th data-i18n="na_cmp_scn">Senario</th>
+              <th data-i18n="na_cmp_off">Proses rasmi</th>
+              <th data-i18n="na_cmp_scm">Amaran penipuan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th data-i18n="na_r1_s">Komunikasi</th>
+              <td class="col-ok" data-i18n="na_r1_o">Emel rasmi universiti</td>
+              <td class="col-bad" data-i18n="na_r1_w">WhatsApp / telefon peribadi</td>
+            </tr>
+            <tr>
+              <th data-i18n="na_r2_s">Penghantaran</th>
+              <td class="col-ok" data-i18n="na_r2_o">Hanya selepas pembelian / PO disahkan</td>
+              <td class="col-bad" data-i18n="na_r2_w">Tekanan segera sebelum pembayaran</td>
+            </tr>
+            <tr>
+              <th data-i18n="na_r3_s">Skop</th>
+              <td class="col-ok" data-i18n="na_r3_o">Berkaitan dengan perniagaan anda</td>
+              <td class="col-bad" data-i18n="na_r3_w">Termasuk item pihak ketiga yang tiada kaitan</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="ac-h3" data-i18n="na_close_h">Apa yang ahli perlu lakukan</h3>
+        <p style="font-size:0.93rem;color:#333;line-height:1.8;" data-i18n="na_close">Sahkan semua pesanan universiti dan kerajaan secara terus dengan pejabat pembelian atau kewangan rasmi sebelum penghantaran. Jangan hantar barang berdasarkan WhatsApp, panggilan telefon, atau PDF LO semata-mata. Notis ini dikongsi untuk kesedaran risiko vendor.</p>
+        <p style="font-size:0.93rem;color:#333;line-height:1.8;margin-top:10px;" data-i18n="na_report">Jika anda menjadi sasaran, laporkan kepada pihak berkuasa (PDRM) dan maklumkan kepada rakan ahli MAMA supaya komuniti kekal terlindung.</p>
+
+        <div class="ac-attrib" data-i18n="na_attrib">Dikeluarkan oleh Bruce Mui, Presiden — Persatuan Pembuatan Aditif Malaysia (MAMA)</div>
+        <div class="ac-disclaimer" data-i18n="na_disclaimer">Amaran ini dikongsi untuk kesedaran risiko ahli berdasarkan laporan yang diterima oleh MAMA. Rujukan kepada nombor telefon tertentu mencerminkan maklumat yang dilaporkan kepada persatuan dan bukan suatu penemuan undang-undang atau tuduhan terhadap mana-mana individu yang dikenal pasti.</div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="mama_logo.png" alt="MAMA" style="width:60px;height:60px;border-radius:50%;margin-bottom:10px;display:block;" onerror="this.src='mama_logo.jpg'" />
+        <div class="abbr">MAMA</div>
+        <div class="tagline" data-i18n="footer_tagline">Malaysia Additive Manufacturing Association<br>Persatuan Percetakan 3D Malaysia<br><br>Menyatukan komuniti Percetakan 3D &amp; Pembuatan Aditif Malaysia sejak 2021.</div>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="fc1_h">Persatuan</h4>
+        <ul>
+          <li><a href="index.html#about" data-i18n="fc1_1">Tentang MAMA</a></li>
+          <li><a href="index.html#committee" data-i18n="fc1_2">Jawatankuasa</a></li>
+          <li><a href="index.html#about" data-i18n="fc1_3">Manifesto</a></li>
+          <li><a href="#" data-i18n="fc1_4">Undang-Undang</a></li>
+          <li><a href="#" data-i18n="fc1_5">Laporan Tahunan</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="fc2_h">Keahlian</h4>
+        <ul>
+          <li><a href="index.html#membership" data-i18n="fc2_1">Individu</a></li>
+          <li><a href="index.html#membership" data-i18n="fc2_2">Korporat</a></li>
+          <li><a href="index.html#membership" data-i18n="fc2_3">Akademik</a></li>
+          <li><a href="register.html" data-i18n="fc2_4">Daftar Sekarang</a></li>
+          <li><a href="#" data-i18n="fc2_5">Perbaharui Keahlian</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="fc3_h">Sumber</h4>
+        <ul>
+          <li><a href="index.html#events" data-i18n="fc3_1">Aktiviti 2026</a></li>
+          <li><a href="#" data-i18n="fc3_2">eRoses Newsletter</a></li>
+          <li><a href="news.html" data-i18n="fc3_3">Berita Industri</a></li>
+          <li><a href="#" data-i18n="fc3_4">Direktori Ahli</a></li>
+          <li><a href="index.html#contact" data-i18n="fc3_5">Hubungi</a></li>
+        </ul>
+      </div>
+    </div>
+    <hr class="footer-divider" />
+    <div class="footer-bottom">
+      <span data-i18n="footer_copy">© 2026 Malaysia Additive Manufacturing Association. Hak cipta terpelihara.</span>
+      <span class="reg">Reg. No: PPM-001-10-17052021 &nbsp;|&nbsp; <span data-i18n="footer_ros">Berdaftar dengan ROS Malaysia</span></span>
+    </div>
+  </div>
+</footer>
+
+<script src="mama.js"></script>
+<script>
+/* News-article translations (merged into the shared dictionary) */
+Object.assign(T.ms, {
+  na_hero_tag:"Amaran Ahli · Berita Industri", na_hero_title:"Berita & Amaran",
+  na_hero_sub:"Notis rasmi dan kemas kini daripada Persatuan Pembuatan Aditif Malaysia (MAMA).",
+  na_badge:"Amaran Risiko Vendor", na_date:"Dikeluarkan 9 Jun 2026 · Urusetia MAMA",
+  na_title:"Amaran Vendor Pencetak 3D — Penipuan Menyamar sebagai Pihak Pembelian",
+  na_lead:"Para ahli diminta berwaspada. Satu percubaan penyamaran pembelian yang disyaki telah dilaporkan, melibatkan individu yang mendakwa mewakili sebuah jabatan universiti. MAMA telah menghubungi universiti tersebut secara terus, dan disahkan bahawa perkara itu tidak sah. Sila kongsikan amaran ini dengan pasukan anda.",
+  na_flow_h:"🚩 Cara penipuan & tanda bahaya",
+  na_flow1_t:"1 · Umpan awal", na_flow1_d:"Wakil universiti palsu menghubungi anda melalui WhatsApp atau nombor telefon peribadi.",
+  na_flow2_t:"2 · Perangkap item luar skop", na_flow2_d:"Mereka menambah item pihak ketiga di luar skop perniagaan anda dan memperkenalkan “pembekal” lain.",
+  na_flow3_t:"3 · LO palsu", na_flow3_d:"Anda menerima dokumen PDF yang direka kelihatan seperti Surat Pesanan (LO) rasmi.",
+  na_flags_h:"Tanda bahaya yang dilaporkan dalam kes ini",
+  na_flag1:"Komunikasi hanya melalui WhatsApp atau nombor telefon peribadi",
+  na_flag2:"Dokumen PDF gaya “LO” dihantar sebagai ganti pesanan yang disahkan",
+  na_flag3:"Tekanan untuk menghantar barang sebelum pembayaran disahkan",
+  na_flag4:"Item pihak ketiga yang tiada kaitan ditambah, di luar skop perniagaan vendor",
+  na_flag5:"Dakwaan palsu bahawa jabatan hanya boleh berurusan dengan satu vendor berdaftar",
+  na_flag6:"Tekanan segera untuk meneruskan dengan cepat",
+  na_shield_h:"🛡️ Cara melindungi diri",
+  na_shield1:"<strong>Sahkan sebelum penghantaran.</strong> Hubungi pejabat pembelian atau kewangan rasmi universiti secara terus untuk mengesahkan sebarang pesanan — guna maklumat hubungan dari laman web rasmi institusi, bukan nombor yang diberikan kepada anda.",
+  na_shield2:"<strong>Peraturan emas dokumen.</strong> Jangan sekali-kali menghantar barang berdasarkan mesej WhatsApp, panggilan telefon, atau PDF “LO” semata-mata. Pesanan Belian (PO) rasmi yang disahkan adalah wajib.",
+  na_shield3:"Nombor yang dilaporkan — berhati-hati dengan sebarang hubungan daripadanya dan sahkan secara bebas:",
+  na_num1_l:"Mendakwa sebagai “wakil”", na_num2_l:"Mendakwa sebagai “pembekal”",
+  na_cmp_h:"Proses rasmi vs. amaran penipuan",
+  na_cmp_scn:"Senario", na_cmp_off:"Proses rasmi", na_cmp_scm:"Amaran penipuan",
+  na_r1_s:"Komunikasi", na_r1_o:"Emel rasmi universiti", na_r1_w:"WhatsApp / telefon peribadi",
+  na_r2_s:"Penghantaran", na_r2_o:"Hanya selepas pembelian / PO disahkan", na_r2_w:"Tekanan segera sebelum pembayaran",
+  na_r3_s:"Skop", na_r3_o:"Berkaitan dengan perniagaan anda", na_r3_w:"Termasuk item pihak ketiga yang tiada kaitan",
+  na_close_h:"Apa yang ahli perlu lakukan",
+  na_close:"Sahkan semua pesanan universiti dan kerajaan secara terus dengan pejabat pembelian atau kewangan rasmi sebelum penghantaran. Jangan hantar barang berdasarkan WhatsApp, panggilan telefon, atau PDF LO semata-mata. Notis ini dikongsi untuk kesedaran risiko vendor.",
+  na_report:"Jika anda menjadi sasaran, laporkan kepada pihak berkuasa (PDRM) dan maklumkan kepada rakan ahli MAMA supaya komuniti kekal terlindung.",
+  na_attrib:"Dikeluarkan oleh Bruce Mui, Presiden — Persatuan Pembuatan Aditif Malaysia (MAMA)",
+  na_disclaimer:"Amaran ini dikongsi untuk kesedaran risiko ahli berdasarkan laporan yang diterima oleh MAMA. Rujukan kepada nombor telefon tertentu mencerminkan maklumat yang dilaporkan kepada persatuan dan bukan suatu penemuan undang-undang atau tuduhan terhadap mana-mana individu yang dikenal pasti."
+});
+Object.assign(T.en, {
+  na_hero_tag:"Member Alerts · Industry News", na_hero_title:"News & Alerts",
+  na_hero_sub:"Official advisories and updates from the Malaysia Additive Manufacturing Association.",
+  na_badge:"Vendor Risk Alert", na_date:"Issued 9 June 2026 · MAMA Secretariat",
+  na_title:"3D Printer Vendor Alert — Procurement Impersonation Scam",
+  na_lead:"Members, please be alert. A suspected procurement-impersonation attempt has been reported, involving a person claiming to represent a university department. MAMA contacted the university directly, which confirmed the matter was not valid. Please share this advisory with your team.",
+  na_flow_h:"🚩 The scam workflow & red flags",
+  na_flow1_t:"1 · The initial hook", na_flow1_d:"A fake university representative contacts you via WhatsApp or a personal mobile number.",
+  na_flow2_t:"2 · The unrelated-item trap", na_flow2_d:"They add a third-party item outside your business scope and introduce a separate “supplier.”",
+  na_flow3_t:"3 · The fake LO", na_flow3_d:"You receive a PDF made to look like an official Letter of Order (LO).",
+  na_flags_h:"Red flags reported in this case",
+  na_flag1:"Communication only through WhatsApp or a personal mobile number",
+  na_flag2:"An “LO”-style PDF sent in place of a verified order",
+  na_flag3:"Pressure to deliver goods before payment is confirmed",
+  na_flag4:"An unrelated third-party item added, outside the vendor’s business scope",
+  na_flag5:"A false claim that the department may deal with only one registered vendor",
+  na_flag6:"Urgent pressure to proceed quickly",
+  na_shield_h:"🛡️ How to protect yourself",
+  na_shield1:"<strong>Verify before delivery.</strong> Call the university’s official procurement or finance office directly to confirm any order — using contact details from the institution’s own website, not the numbers given to you.",
+  na_shield2:"<strong>The golden rule of documents.</strong> Never deliver based on WhatsApp messages, phone calls, or a PDF “LO” alone. An official, confirmed Purchase Order (PO) is required.",
+  na_shield3:"Numbers reported in this attempt — treat any contact from them with caution and verify independently:",
+  na_num1_l:"Claimed “representative”", na_num2_l:"Claimed “supplier”",
+  na_cmp_h:"Official process vs. scam warning",
+  na_cmp_scn:"Scenario", na_cmp_off:"Official process", na_cmp_scm:"Scam warning",
+  na_r1_s:"Communication", na_r1_o:"Official university email", na_r1_w:"WhatsApp / personal mobile",
+  na_r2_s:"Delivery", na_r2_o:"Only after a confirmed procurement / PO", na_r2_w:"Urgent pressure before payment",
+  na_r3_s:"Scope", na_r3_o:"Relevant to your business", na_r3_w:"Includes unrelated third-party items",
+  na_close_h:"What members should do",
+  na_close:"Verify all university and government orders directly with the official procurement or finance office before delivery. Do not deliver goods based on WhatsApp, a phone call, or a PDF LO alone. This notice is shared for vendor risk awareness.",
+  na_report:"If you are targeted, report it to the authorities (PDRM) and alert fellow MAMA members so the community stays protected.",
+  na_attrib:"Issued by Bruce Mui, President — Malaysia Additive Manufacturing Association",
+  na_disclaimer:"This advisory is shared for member risk-awareness based on a report received by MAMA. References to specific phone numbers reflect information reported to the association and do not constitute a legal finding or an accusation against any identified individual."
+});
+Object.assign(T.zh, {
+  na_hero_tag:"会员警示 · 行业资讯", na_hero_title:"新闻与警示",
+  na_hero_sub:"马来西亚增材制造协会（MAMA）的官方公告与更新。",
+  na_badge:"供应商风险警示", na_date:"发布于 2026年6月9日 · MAMA 秘书处",
+  na_title:"3D 打印机供应商警示 — 冒充大学采购的骗局",
+  na_lead:"请各会员提高警惕。我们接获一宗疑似冒充采购的举报，涉及一名自称代表某大学部门的人士。MAMA 已直接联系该大学，校方确认此事并不属实。请将此警示转告您的团队。",
+  na_flow_h:"🚩 骗局流程与危险信号",
+  na_flow1_t:"1 · 初次接触", na_flow1_d:"假冒的大学代表通过 WhatsApp 或私人手机号码与您联系。",
+  na_flow2_t:"2 · 无关物品陷阱", na_flow2_d:"对方加入超出您业务范围的第三方物品，并介绍另一名“供应商”。",
+  na_flow3_t:"3 · 伪造采购函（LO）", na_flow3_d:"您会收到一份伪装成正式采购函（LO）的 PDF 文件。",
+  na_flags_h:"本案中举报的危险信号",
+  na_flag1:"仅通过 WhatsApp 或私人手机号码沟通",
+  na_flag2:"以“LO”样式的 PDF 取代经核实的正式订单",
+  na_flag3:"在付款确认之前施压要求交货",
+  na_flag4:"加入与供应商业务范围无关的第三方物品",
+  na_flag5:"谎称该部门只能与一家注册供应商往来",
+  na_flag6:"紧急施压，要求尽快进行",
+  na_shield_h:"🛡️ 如何保护自己",
+  na_shield1:"<strong>交货前先核实。</strong>直接致电大学的官方采购或财务部门核实任何订单——使用院校官网上的联系方式，而非对方提供的号码。",
+  na_shield2:"<strong>文件的黄金法则。</strong>切勿仅凭 WhatsApp 信息、电话或 PDF“LO”交货。必须有正式、经确认的采购订单（PO）。",
+  na_shield3:"此次事件中举报的号码——对来自这些号码的任何联系都应谨慎对待，并独立核实：",
+  na_num1_l:"自称“代表”", na_num2_l:"自称“供应商”",
+  na_cmp_h:"正规流程 vs. 骗局警示",
+  na_cmp_scn:"情境", na_cmp_off:"正规流程", na_cmp_scm:"骗局警示",
+  na_r1_s:"沟通方式", na_r1_o:"大学官方电邮", na_r1_w:"WhatsApp / 私人手机",
+  na_r2_s:"交货", na_r2_o:"仅在采购 / PO 确认后", na_r2_w:"付款前紧急施压",
+  na_r3_s:"范围", na_r3_o:"与您的业务相关", na_r3_w:"包含无关的第三方物品",
+  na_close_h:"会员应采取的行动",
+  na_close:"在交货前，直接向官方采购或财务部门核实所有大学与政府订单。切勿仅凭 WhatsApp、电话或 PDF 采购函交货。本通知旨在提高供应商风险意识。",
+  na_report:"若您成为目标，请向当局（PDRM 警方）举报，并通知其他 MAMA 会员，让整个社区保持警惕。",
+  na_attrib:"由 Bruce Mui 发布，主席 — 马来西亚增材制造协会（MAMA）",
+  na_disclaimer:"本警示基于 MAMA 接获的举报，仅供会员风险意识参考。文中提及的特定电话号码反映的是向协会举报的信息，并不构成法律认定，也不构成对任何特定个人的指控。"
+});
+applyTranslations();
+</script>
+</body>
+</html>
